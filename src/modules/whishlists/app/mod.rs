@@ -4,7 +4,7 @@ use chrono::prelude::Local;
 
 use super::{
   domain::entities::collection::Collection,
-  dtos::collection::CreateCollection,
+  dtos::collection::{CreateCollection, UpdateCollection},
   domain::repository::CollectionRepository
 };
 
@@ -47,6 +47,24 @@ impl ColectionManager {
       Ok(d) => {return Ok(d);},
       Err(e) => {
         return Err(format!("{}", e));
+      }
+    }
+  }
+
+  pub fn update(&self, id: String, data: UpdateCollection) -> Result<Collection, String> {
+    match data.validate() {
+      Ok(_) => {},
+      Err(e) => {
+        return Err(format!("{}", e));
+      }
+    };
+    
+    match self.repo.update(id, data) {
+      Ok(updated) => {return Ok(updated)},
+      Err(e) => {
+        // todo: replace with logger lib
+        println!("{}", e);
+        return Err(e);
       }
     }
   }

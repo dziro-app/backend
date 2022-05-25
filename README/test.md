@@ -21,14 +21,14 @@ $ cargo test
 $ cargo test whishlists::
 ```
 
-🔬 **Run all module integration tests**
-```bash
-$ cargo test --test whishlists
-```
 
 🔬 **Show output**
 ```bash
 $ cargo test -- --show-output
+```
+🔬 **Run some integration tests**
+```bash
+$ cargo test --test whishlist_update -- --show-output --ignored
 ```
 
 ---
