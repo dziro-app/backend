@@ -74,7 +74,16 @@ impl CollectionRepository for MongoCollectionRepo {
 
   }
 
-  fn delete(& self) -> Result<(), String> {
-      todo!()
+  fn delete(& self, id: String) -> Result<(), String> {
+    let collection = self.client.db.collection::<Collection>(COLLECTION_NAME);
+    match collection.delete_one(doc! { "id": id}, None) {
+      Ok(r) => {
+        if r.deleted_count > 0 {
+          return Ok(())
+        }
+        return Err(String::from("Not found"))
+      },
+      Err(e) => {return Err(format!("{}", e))}
+    };
   }
 }

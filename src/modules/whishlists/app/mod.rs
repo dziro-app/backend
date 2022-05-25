@@ -68,4 +68,15 @@ impl ColectionManager {
       }
     }
   }
+
+  pub fn delete(&self, id: String) -> Result<(), String> {
+    match self.repo.delete(id) {
+      Ok(_) => { Ok (())},
+      Err(e) => {
+        // todo: replace with logger lib
+        println!("{}", e);
+        return Err(e);
+      }
+    }
+  }
 }

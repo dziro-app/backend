@@ -7,5 +7,5 @@ pub trait CollectionRepository {
   fn list(&self) -> Result<Vec<Collection>, String>;
   fn save(&self, data: Collection) -> Result<Collection, String>;
   fn update(&self, id: String, data: UpdateCollection) -> Result<Collection, String>;
-  fn delete(&self) -> Result<(), String>;
+  fn delete(&self, id: String) -> Result<(), String>;
 }
