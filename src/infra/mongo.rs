@@ -9,7 +9,7 @@ impl Connection {
   pub async fn new() -> Result<Connection, Error> {
     let client_options = ClientOptions::parse("mongodb://root:example@localhost:27017").await?;
     let client = Client::with_options(client_options)?;
-    let db = client.database("mydb");
+    let db = client.database("dziro");
 
     return Ok(Connection{db: db});
 

@@ -1,8 +1,11 @@
-use create::modules::whishlists::{
+use crate::modules::whishlists::{
   domain::entities::collection::Collection,
-  dtos::CreateCollection
+  dtos::collection::{UpdateCollection}
 };
 
-pub trait Collection {
-  fn save(& self, data: CreateCollection) -> Result<Collection, Error>;
+pub trait CollectionRepository {
+  fn list(&self) -> Result<Vec<Collection>, String>;
+  fn save(&self, data: Collection) -> Result<Collection, String>;
+  fn update(&self, data: UpdateCollection) -> Result<Collection, String>;
+  fn delete(&self) -> Result<(), String>;
 }

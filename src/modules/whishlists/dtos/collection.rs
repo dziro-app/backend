@@ -1,5 +1,5 @@
 use regex::Regex;
-use serde::{Deserialize};
+use serde::{Deserialize, Serialize};
 use validator::{Validate};
 
 lazy_static! {
@@ -10,7 +10,7 @@ lazy_static! {
  * Collection data transfer object
 */
 
-#[derive(Deserialize, Validate, Clone)]
+#[derive(Deserialize, Serialize, Validate, Clone)]
 pub struct CreateCollection {
   #[validate(length(min = 1))]
   pub name: String,
@@ -20,7 +20,7 @@ pub struct CreateCollection {
   pub emoji: String
 }
 
-#[derive(Deserialize, Validate, Clone)]
+#[derive(Deserialize, Serialize, Validate, Clone)]
 pub struct UpdateCollection {
   #[validate(length(min = 1))]
   pub name: Option<String>,

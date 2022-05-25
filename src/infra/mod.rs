@@ -1,1 +1,1 @@
-pub mod mongo;
+pub mod sync_mongo;

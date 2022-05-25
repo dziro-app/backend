@@ -1,4 +1,4 @@
-use serde::{Serialize};
+use serde::{Serialize, Deserialize};
 
 /*
  * Item
@@ -13,7 +13,7 @@ use serde::{Serialize};
 }
 */
 
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Item {
   pub id: String,
   pub title: String,

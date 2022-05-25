@@ -1,4 +1,4 @@
-use serde::{Serialize};
+use serde::{Serialize, Deserialize};
 use crate::modules::whishlists::domain::entities::item::Item;
 
 /*
@@ -14,7 +14,7 @@ use crate::modules::whishlists::domain::entities::item::Item;
  "createdAt": "2022-04-18T22:39:16.627Z",
 }
 */
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Collection {
   pub id: String,
   pub name: String,
