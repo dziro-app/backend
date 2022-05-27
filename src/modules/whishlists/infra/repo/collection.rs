@@ -15,7 +15,6 @@ pub struct MongoCollectionRepo {
 }
 
 
-// #[async_trait]
 impl CollectionRepository for MongoCollectionRepo {
 
   fn list(&self) -> Result<Vec<Collection>, String> {
