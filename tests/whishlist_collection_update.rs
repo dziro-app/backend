@@ -1,7 +1,7 @@
 use api::infra::sync_mongo::Connection;
 use api::modules::whishlists::{
-  infra::repo::MongoCollectionRepo,
-  app::ColectionManager,
+  infra::repo::collection::MongoCollectionRepo,
+  app::collection,
   dtos::collection::UpdateCollection
 };
 
@@ -21,7 +21,7 @@ async fn it_update_a_collection() {
     client: client
   };
 
-  let manager = ColectionManager {
+  let manager = collection::Manager {
     repo: Box::new(repo)
   };
 

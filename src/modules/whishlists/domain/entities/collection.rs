@@ -31,7 +31,7 @@ mod whishlists {
   use super::*;
 
   #[test]
-  fn ut_test_collection() {
+  fn ut_test_collection_entity  () {
     let items: Vec<Item> = Vec::new();
 
     let c = Collection {

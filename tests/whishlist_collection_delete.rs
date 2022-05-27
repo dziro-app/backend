@@ -1,13 +1,13 @@
 use api::infra::sync_mongo::Connection;
 use api::modules::whishlists::{
-  infra::repo::MongoCollectionRepo,
-  app::ColectionManager
+  infra::repo::collection::MongoCollectionRepo,
+  app::collection,
 };
 
 
 #[tokio::test]
 #[ignore = "mongodb disponibility"]
-async fn it_read_collections() {
+async fn it_delete_a_collection() {
   /*
   * This test validates the connection with a mongo instace.
   - Uses a client connection
@@ -20,16 +20,16 @@ async fn it_read_collections() {
     client: client
   };
 
-  let manager = ColectionManager {
+  let manager = collection::Manager {
     repo: Box::new(repo)
   };
 
-  match manager.list() {
-    Ok(cs) => {
-      println!("{:#?}", cs);
-    }, 
+  match manager.delete(String::from("")) {
+    Ok(_) => {},
     Err(e) => {
       panic!("{}", e);
     }
   };
+
 }
+
