@@ -1,6 +1,5 @@
 use api::infra::sync_mongo::Connection;
 use api::modules::whishlists::{
-  dtos::item::UpdateItem,
   infra::repo::item::MongoItemRepo,
   app::item,
 };
@@ -8,7 +7,7 @@ use api::modules::whishlists::{
 
 #[tokio::test]
 #[ignore = "mongodb disponibility"]
-async fn it_updates_an_item() {
+async fn it_delete_an_item() {
   /*
   * This test validates the connection with a mongo instace.
   - Uses a client connection
@@ -25,17 +24,8 @@ async fn it_updates_an_item() {
     repo: Box::new(repo)
   };
 
-  let data = UpdateItem {
-    image: None,
-    title: Some(String::from("El hombre en busca de sentido")),
-    website: None,
-    price: None,
-    obtained: Some(true)
-  };
 
-  match manager.update(
-    String::from("1defe591-2dd7-4252-804c-7eae006ce1b9"), 
-    data) {
+  match manager.delete(String::from("654e0771-fa7f-4108-a326-ace4f72a39df")) {
     Ok(c) => {
       println!("{:#?}", c);
     },

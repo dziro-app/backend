@@ -56,7 +56,6 @@ impl ItemRepository for MongoItemRepo {
       .return_document(ReturnDocument::After)
       .build();
 
-
     let mut update = doc!{};
     let mut partial = doc! {};
 
@@ -97,7 +96,22 @@ impl ItemRepository for MongoItemRepo {
     }
   }
 
-  fn delete(&self, collection_id: String, id: String) -> Result<(), String> {
-    todo!();
+  fn delete(&self, id: String) -> Result<(), String> {
+    let collection = self.client.db.collection::<Collection>(COLLECTION_NAME);
+    let options = FindOneAndUpdateOptions::builder()
+      .return_document(ReturnDocument::After)
+      .build();
+
+    let delete = doc! {
+      "$pull": { "items": { "id": id.clone() }}
+    };
+
+
+    match collection.find_one_and_update(doc! { "items.id": id }, delete, options).unwrap() {
+      Some(_) => {
+        return Ok(());
+      },
+      None => {return Err(format!("Not found"))}
+    }
   }
 }

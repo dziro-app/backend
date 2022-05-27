@@ -69,8 +69,8 @@ impl Manager {
     }
   }
 
-  pub fn delete(&self, collection_id: String, id: String) -> Result<(), String> {
-    match self.repo.delete(collection_id, id) {
+  pub fn delete(&self, id: String) -> Result<(), String> {
+    match self.repo.delete(id) {
       Ok(_) => { Ok (())},
       Err(e) => {
         // todo: replace with logger lib

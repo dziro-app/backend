@@ -1,0 +1,62 @@
+// MongoDB Playground
+// To disable this template go to Settings | MongoDB | Use Default Template For Playground.
+// Make sure you are connected to enable completions and to be able to run a playground.
+// Use Ctrl+Space inside a snippet or a string literal to trigger completions.
+
+// Select the database to use.
+use('dziro');
+
+/*
+ * Drop all collections
+*/
+// db.collections.drop()
+
+
+/*
+ * Update an item prop in collection.items array
+*/
+
+//  db.collections.findOneAndUpdate(
+//   { "items.id": "1defe591-2dd7-4252-804c-7eae006ce1b9"},
+//   {
+//      "$set": {"items.$.price": 340}
+//   }
+// )
+
+// ### complex version
+
+// db.collections.findOneAndUpdate({ "id": "91442251-34ff-4cbd-9de9-8657418897f3"}, {
+//   "$set": {"items": []}
+// })
+
+// db.collections.findOneAndUpdate(
+//   { 
+//     "id": "91442251-34ff-4cbd-9de9-8657418897f3"},
+//   {
+//     "$set": {
+//       "items.$[elx].obtained": false 
+//     }, 
+//   },
+//   {
+//     "arrayFilters": [ 
+//       {
+//         "elx.id": {$eq: "b219deec-5628-446b-864e-500784b28eb3"}
+//       }
+//     ]
+//   })
+
+
+
+/*
+ * Delete an item inside
+*/
+
+
+//  db.collections.findOneAndUpdate(
+//   { "items.id": "1defe591-2dd7-4252-804c-7eae006ce1b9"},
+//   {
+//      "$pull": {"items": { "id": "1defe591-2dd7-4252-804c-7eae006ce1b9" }}
+//   }
+// )
+
+db.collections.find({})
