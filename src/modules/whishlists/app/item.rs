@@ -51,7 +51,7 @@ impl Manager {
     }
   }
 
-  pub fn update(&self, collection_id: String, id: String, data: UpdateItem) -> Result<Collection, String> {
+  pub fn update(&self, id: String, data: UpdateItem) -> Result<Collection, String> {
     match data.validate() {
       Ok(_) => {},
       Err(e) => {
@@ -59,7 +59,7 @@ impl Manager {
       }
     };
     
-    match self.repo.update(collection_id, id, data) {
+    match self.repo.update(id, data) {
       Ok(updated) => {return Ok(updated)},
       Err(e) => {
         // todo: replace with logger lib

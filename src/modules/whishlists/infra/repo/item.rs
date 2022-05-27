@@ -50,26 +50,45 @@ impl ItemRepository for MongoItemRepo {
     }
   }
 
-  fn update(&self, collection_id: String, id: String, data: UpdateItem) -> Result<Collection, String> {
+  fn update(&self, id: String, data: UpdateItem) -> Result<Collection, String> {
     let collection = self.client.db.collection::<Collection>(COLLECTION_NAME);
-    let arr_f = Some(vec![doc!{ "id": { "$eq":  id} }]);
     let options = FindOneAndUpdateOptions::builder()
       .return_document(ReturnDocument::After)
-      .array_filters(arr_f) .build();
+      .build();
 
-    let update = doc!{
-      "$set": {
-        "items.$[id]": Bson::Document(doc!{
-          "title": data.title,
-          "website": data.website,
-          "price": data.price,
-          "image": data.image,
-          "obtained": data.obtained,
-        })
-      }
+
+    let mut update = doc!{};
+    let mut partial = doc! {};
+
+    match data.title {
+      Some(v) => { partial.insert("items.$.title", v);},
+      None => {}
     };
+
+    match data.website {
+      Some(v) => { partial.insert("items.$.website", v);},
+      None => {}
+    };
+
+    match data.price {
+      Some(v) => { partial.insert("items.$.price", v);},
+      None => {}
+    };
+
+    match data.image {
+      Some(v) => { partial.insert("items.$.image", v);},
+      None => {}
+    };
+
+    match data.obtained {
+      Some(v) => { partial.insert("items.$.obtained", v);},
+      None => {}
+    };
+
+    update.insert("$set", partial);
+
     
-    match collection.find_one_and_update(doc! { "id": collection_id }, update, options).unwrap() {
+    match collection.find_one_and_update(doc! { "items.id": id }, update, options).unwrap() {
       Some(c) => {
         // let updated: Vec<Item>= c.items.iter().filter(|item| item.id == id).collect();
         return Ok(c);

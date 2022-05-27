@@ -32,7 +32,7 @@ async fn it_create_an_item() {
     price: String::from("300.00")
   };
 
-  match manager.create(String::from("91442251-34ff-4cbd-9de9-8657418897f3"), data) {
+  match manager.create(String::from("00a3313b-c3a4-4bbf-ae94-8434a3bed088"), data) {
     Ok(c) => {
       println!("{:#?}", c);
       assert_eq!(c.title, String::from("Ropa"));

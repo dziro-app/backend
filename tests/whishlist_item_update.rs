@@ -27,15 +27,14 @@ async fn it_create_an_item() {
 
   let data = UpdateItem {
     image: None,
-    title: None,
+    title: Some(String::from("El hombre en busca de sentido")),
     website: None,
     price: None,
     obtained: Some(true)
   };
 
   match manager.update(
-    String::from("91442251-34ff-4cbd-9de9-8657418897f3"),
-    String::from("97b752ea-3f37-4107-923e-c56645c3d7b6"), 
+    String::from("1defe591-2dd7-4252-804c-7eae006ce1b9"), 
     data) {
     Ok(c) => {
       println!("{:#?}", c);
