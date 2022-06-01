@@ -1,0 +1,10 @@
+[database]
+host = 'mongodb://root:example@localhost:27017'
+name = 'dziro'
+
+[server]
+host = '127.0.0.1'
+port = 8888
+
+[jwt]
+secret = 'PPPPGGGGG90997'
