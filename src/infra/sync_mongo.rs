@@ -3,7 +3,7 @@ use mongodb::{
   sync::Database
 };
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Connection {
   pub db: Database
 }
