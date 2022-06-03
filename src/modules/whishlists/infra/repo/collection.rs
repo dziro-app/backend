@@ -10,6 +10,7 @@ use crate::modules::whishlists::{
 
 pub static COLLECTION_NAME: &'static str = "collections";
 
+#[derive(Clone)]
 pub struct MongoCollectionRepo {
   pub client: Connection
 }
