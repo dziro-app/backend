@@ -56,13 +56,26 @@ impl CollectionRepository for MongoCollectionRepo {
     let collection = self.client.db.collection::<Collection>(COLLECTION_NAME);
     let options = FindOneAndUpdateOptions::builder().return_document(ReturnDocument::After).build();
 
-    let update= doc! {
-      "$set": {
-        "name": data.name,
-        "color": data.color,
-        "emoji": data.emoji,
-     }
+
+    let mut update = doc!{};
+    let mut partial = doc! {};
+
+    match data.name {
+      Some(v) => { partial.insert("name", v);},
+      None => {}
     };
+
+    match data.color {
+      Some(v) => { partial.insert("color", v);},
+      None => {}
+    };
+
+    match data.emoji {
+      Some(v) => { partial.insert("emoji", v);},
+      None => {}
+    };
+
+    update.insert("$set", partial);
 
     match collection.find_one_and_update(doc! { "id": id }, update, options) {
       Ok(result) => {

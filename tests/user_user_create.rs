@@ -1,4 +1,6 @@
 use api::infra::sync_mongo::Connection;
+use api::infra::config::Settings;
+
 use api::modules::users::{
   dtos::CreateUser,
   infra::repo::MongoUserRepo,
@@ -15,7 +17,9 @@ async fn it_create_a_user() {
   - Uses a mongo repository
   - Uses UserManager struct
   */
-  let client = Connection::new().await;
+
+  let s = Settings::new().unwrap();
+  let client =  Connection::new(s.database.host, s.database.name).await ;
 
   let repo = MongoUserRepo{
     client: client

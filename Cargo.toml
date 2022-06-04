@@ -14,7 +14,7 @@ lazy_static = "1.4.0"
 chrono = "0.4.19"
 regex = "1"
 jsonwebtoken = "8.1.0"
-rocket = "0.5.0-rc.2"
+rocket =  { version = "0.5.0-rc.2", features=["json"]}
 
 [dependencies.serde]
 version = "1.0.137"

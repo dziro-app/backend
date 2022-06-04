@@ -1,4 +1,6 @@
 use api::infra::sync_mongo::Connection;
+use api::infra::config::Settings;
+
 use api::modules::whishlists::{
   infra::repo::item::MongoItemRepo,
   app::item,
@@ -14,7 +16,8 @@ async fn it_delete_an_item() {
   - Uses a mongo repository
   - Uses CollectionManager struct
   */
-  let client = Connection::new().await;
+  let s = Settings::new().unwrap();
+  let client =  Connection::new(s.database.host, s.database.name).await;
 
   let repo = MongoItemRepo{
     client: client

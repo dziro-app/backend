@@ -9,7 +9,7 @@ use api::modules::{
 
 use api::modules::whishlists::infra::{
   repo::{collection::MongoCollectionRepo, item::MongoItemRepo},
-  endpoints::get_collections
+  endpoints::collection::{get_collections, create_collection, update_collection, delete_collection}
 };
 
 
@@ -22,7 +22,7 @@ async fn rocket() -> _ {
   };
 
   // Create Db connection
-  let db = Connection::new().await;
+  let db = Connection::new(settings.database.host, settings.database.name).await;
   
   // Repositories
   let user_repo = MongoUserRepo { client: db.clone() };
@@ -40,7 +40,10 @@ async fn rocket() -> _ {
     .mount("/api/auth", routes![
       get_third_token
     ])
-    .mount("/api/whishists", routes![
-      get_collections
+    .mount("/api/wishlists", routes![
+      get_collections,
+      create_collection,
+      update_collection,
+      delete_collection
     ])
 }

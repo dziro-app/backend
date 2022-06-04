@@ -9,10 +9,10 @@ pub struct Connection {
 }
 
 impl Connection {
-  pub async fn new() -> Connection {
-    let client = Client::with_uri_str("mongodb://root:example@localhost:27017").unwrap();
+  pub async fn new(uri: String, db_name: String) -> Connection {
+    let client = Client::with_uri_str(uri).unwrap();
 
-    let db = client.database("dziro");
+    let db = client.database(db_name.as_str());
 
     Connection{db: db}
   }
@@ -21,16 +21,20 @@ impl Connection {
 #[cfg(test)]
 mod mongo {
   use super::*;
+  use crate::infra::config::Settings;
 
   #[test]
   fn ut_test_create_connection() {
-    let _ = Connection::new();
+    let s = Settings::new().unwrap();
+    let _ = Connection::new(s.database.host, s.database.name);
   }
 
   #[tokio::test]
   #[ignore = "mongodb disponibility"]
   async fn ut_test_connection() {
-    let c =  Connection::new().await ;
+    let s = Settings::new().unwrap();
+
+    let c =  Connection::new(s.database.host, s.database.name).await ;
 
     let collections = match c.db.list_collection_names(None) {
       Ok(cs) => cs,

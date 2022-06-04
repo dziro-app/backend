@@ -1,4 +1,6 @@
 use api::infra::sync_mongo::Connection;
+use api::infra::config::Settings;
+
 use api::modules::whishlists::{
   dtos::collection::CreateCollection,
   infra::repo::collection::MongoCollectionRepo,
@@ -15,7 +17,8 @@ async fn it_create_a_collection() {
   - Uses a mongo repository
   - Uses CollectionManager struct
   */
-  let client = Connection::new().await;
+  let s = Settings::new().unwrap();
+  let client =  Connection::new(s.database.host, s.database.name).await;
 
   let repo = MongoCollectionRepo{
     client: client
