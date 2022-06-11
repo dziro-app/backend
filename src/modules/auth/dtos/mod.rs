@@ -6,8 +6,14 @@ pub struct Claim {
   pub exp: usize
 }
 
+#[derive(Deserialize, Serialize, Debug)]
+pub struct UserResponse {
+  pub username: String,
+  pub profile: String
+}
 // Struct for successfull auth response
 #[derive(Deserialize, Serialize, Debug)]
 pub struct JwtResponse {
-  pub access_token: String
+  pub access_token: String,
+  pub user: UserResponse
 }

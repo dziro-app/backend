@@ -17,7 +17,7 @@ use('dziro');
 */
 
 //  db.collections.findOneAndUpdate(
-//   { "items.id": "1defe591-2dd7-4252-804c-7eae006ce1b9"},
+//   { "items.id": "5870a087-1604-4d44-b5ca-3569a61b9143"},
 //   {
 //      "$set": {"items.$.price": 340}
 //   }

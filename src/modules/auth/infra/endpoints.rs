@@ -7,7 +7,7 @@ use crate::infra::state::AppState;
 use crate::modules::auth::{
   infra::spotify,
   app::jwt::JwtManager,
-  dtos::JwtResponse
+  dtos::{JwtResponse, UserResponse}
 };
 use crate::modules::users::{
   app::Manager as UserManager,
@@ -22,8 +22,8 @@ struct RedirectUrl {
 }
 
 #[derive(Deserialize, Debug)]
-pub struct TokenInfo {
-  token: String
+pub struct CodeInfo {
+  code: String
 }
 
 
@@ -48,12 +48,12 @@ pub fn get_third_token(third_api: String,  state: &State<AppState>) ->  status::
 }
 
 
-#[post("/<third_api>/callback", format="application/json", data="<token_info>")]
-pub async fn validate_third_token(third_api: String, token_info: Json<TokenInfo>, state: &State<AppState>, cookies: &CookieJar<'_>) ->  status::Custom<content::RawJson<String>>  {
+#[post("/<third_api>/callback", format="application/json", data="<code_info>")]
+pub async fn validate_third_token(third_api: String, code_info: Json<CodeInfo>, state: &State<AppState>, cookies: &CookieJar<'_>) ->  status::Custom<content::RawJson<String>>  {
  match third_api.as_str() {
     "spotify" => {
       let config = state.oauths.spotify.clone();
-      let token = spotify::get_auth_token(config, token_info.token.clone()).await.unwrap();
+      let token = spotify::get_auth_token(config, code_info.code.clone()).await.unwrap();
       let user_data = spotify::get_user_info(token).await.unwrap();
 
       let user_manager = UserManager {
@@ -93,10 +93,15 @@ pub async fn validate_third_token(third_api: String, token_info: Json<TokenInfo>
           println!("{}", e);
           return status::Custom(Status::InternalServerError, content::RawJson(String::from("{}"))); }
       };
+
       cookies.add(Cookie::new("refresh_token", refresh_token));
 
       let response = JwtResponse {
-        access_token: access_token
+        access_token: access_token,
+        user: UserResponse {
+          username: user.username,
+          profile: user.profile_pic
+        }
       };
 
       let content = serde_json::to_string(&response).unwrap();

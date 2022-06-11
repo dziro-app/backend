@@ -51,7 +51,7 @@ impl ItemRepository for MongoItemRepo {
     }
   }
 
-  fn update(&self, id: String, data: UpdateItem) -> Result<Collection, String> {
+  fn update(&self, id: String, data: UpdateItem) -> Result<Item, String> {
     let collection = self.client.db.collection::<Collection>(COLLECTION_NAME);
     let options = FindOneAndUpdateOptions::builder()
       .return_document(ReturnDocument::After)
@@ -71,7 +71,7 @@ impl ItemRepository for MongoItemRepo {
     };
 
     match data.price {
-      Some(v) => { partial.insert("items.$.price", v);},
+      Some(v) => { partial.insert("items.$.price", v.parse::<f32>().unwrap()); },
       None => {}
     };
 
@@ -86,12 +86,15 @@ impl ItemRepository for MongoItemRepo {
     };
 
     update.insert("$set", partial);
-
     
-    match collection.find_one_and_update(doc! { "items.id": id }, update, options).unwrap() {
+    match collection.find_one_and_update(doc! { "items.id": id.clone() }, update, options).unwrap() {
       Some(c) => {
-        // let updated: Vec<Item>= c.items.iter().filter(|item| item.id == id).collect();
-        return Ok(c);
+        let updated: Vec<Item>= c.items
+          .into_iter()
+          .filter(|item| item.id == id)
+          .collect();
+        
+        return Ok(updated[0].clone());
       },
       None => {return Err(format!("Not found"))}
     }

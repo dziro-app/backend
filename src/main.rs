@@ -1,4 +1,5 @@
-use rocket::{launch, routes, build};
+use rocket::{launch, routes, build, http::Method};
+use rocket_cors::{AllowedOrigins};
 
 use api::infra::state::{AppState, Repositories, OauthsConfig, JwtConfig};
 use api::infra::{config::Settings, sync_mongo::Connection};
@@ -16,7 +17,7 @@ use api::modules::whishlists::infra::{
 
 
 #[launch]
-async fn rocket() -> _ {
+async fn rocket() ->  _ {
   // Read setting from env
   let settings = match Settings::new() {
     Ok(s) => {s},
@@ -52,6 +53,19 @@ async fn rocket() -> _ {
       secret: settings.jwt.secret
     }
   };
+
+  let allowed_origins = AllowedOrigins::some_exact(&["http://localhost:3000"]);
+
+  let cors = rocket_cors::CorsOptions {
+    allowed_origins,
+
+    allowed_methods: vec![Method::Get, Method::Options, Method::Post, Method::Patch, Method::Delete].into_iter().map(From::from).collect(),
+    // allowed_headers: AllowedHeaders::some(&["Authorization", "Accept"]),
+    allow_credentials: true,
+    ..Default::default()
+  }
+  .to_cors().expect("Bad cors config");
+
   
   build()
     .manage(state)
@@ -70,4 +84,5 @@ async fn rocket() -> _ {
       update_item,
       delete_item
     ])
+    .attach(cors)
 }

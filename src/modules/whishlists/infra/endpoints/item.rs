@@ -7,23 +7,6 @@ use crate::modules::whishlists::app::item;
 use crate::modules::whishlists::dtos::item::{CreateItem, UpdateItem};
 
 
-// #[get("/")]
-// pub fn get_items(state: &State<Repositories>) -> status::Custom<content::RawJson<String>> {
-//   let manager  = item::Manager{
-//     repo: Box::new(state.item.clone())
-//   };
-
-//   match manager.list() {
-//     Ok(l) => {
-//       let content = serde_json::to_string(&l).unwrap();
-//       return status::Custom(Status::Ok, content::RawJson(content));
-//     },
-//     Err(_e) => { 
-//       return status::Custom(Status::NotFound, content::RawJson(String::from("{}")));
-//     }
-//   }
-// }
-
 #[post("/<collection_id>", format="application/json", data="<create>")]
 pub fn create_item(state: &State<AppState>, collection_id: String, create: Json<CreateItem>) -> status::Custom<content::RawJson<String>> {
   let manager  = item::Manager{
@@ -33,8 +16,8 @@ pub fn create_item(state: &State<AppState>, collection_id: String, create: Json<
   let data = CreateItem {
     title: create.title.clone(),
     image: create.image.clone(),
-    website: create.image.clone(),
-    price: create.image.clone()
+    website: create.website.clone(),
+    price: create.price.clone()
   };
 
   match manager.create(collection_id, data) {
@@ -59,8 +42,8 @@ pub fn update_item(state: &State<AppState>, id: String, partial: Json<UpdateItem
   let data = UpdateItem {
     title: partial.title.clone(),
     image: partial.image.clone(),
-    website: partial.image.clone(),
-    price: partial.image.clone(),
+    website: partial.website.clone(),
+    price: partial.price.clone(),
     obtained: partial.obtained.clone()
   };
 
@@ -70,7 +53,8 @@ pub fn update_item(state: &State<AppState>, id: String, partial: Json<UpdateItem
       let content = serde_json::to_string(&l).unwrap();
       return status::Custom(Status::Ok, content::RawJson(content));
     },
-    Err(_e) => { 
+    Err(e) => { 
+      println!("{}", e);
       return status::Custom(Status::NotFound, content::RawJson(String::from("{}")));
     }
   }

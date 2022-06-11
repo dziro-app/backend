@@ -51,7 +51,7 @@ impl Manager {
     }
   }
 
-  pub fn update(&self, id: String, data: UpdateItem) -> Result<Collection, String> {
+  pub fn update(&self, id: String, data: UpdateItem) -> Result<Item, String> {
     match data.validate() {
       Ok(_) => {},
       Err(e) => {
