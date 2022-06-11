@@ -10,7 +10,7 @@ use crate::modules::users::{
 
 pub static COLLECTION_NAME: &'static str = "users";
 
-
+#[derive(Clone)]
 pub struct MongoUserRepo {
   pub client: Connection
 }
@@ -27,13 +27,13 @@ impl UserRepositoy for MongoUserRepo {
     };  
   }
 
-  fn find(&self, id: String) -> Result<User, String> {
+  fn find(&self, id: String) -> Option<User> {
     let collection = self.client.db.collection::<User>(COLLECTION_NAME);
     match collection.find_one(doc!{ "id": id }, None).unwrap() {
       Some(user) => {
-        return Ok(user);
+        return Some(user);
       },
-      None => { return Err(String::from("Not found"));}
+      None => { return None }
     };
   }
 }

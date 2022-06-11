@@ -11,7 +11,6 @@ lazy_static! {
 */
 
 #[derive(Deserialize, Serialize, Validate, Clone, Debug)]
-// #[serde(crate = "rocket::serde")]
 pub struct CreateCollection {
   #[validate(length(min = 1))]
   pub name: String,

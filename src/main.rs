@@ -1,15 +1,17 @@
 use rocket::{launch, routes, build};
 
-use api::infra::state::Repositories;
+use api::infra::state::{AppState, Repositories, OauthsConfig, JwtConfig};
 use api::infra::{config::Settings, sync_mongo::Connection};
 use api::modules::{
-  auth::infra::get_third_token,
+  auth::infra::endpoints::{get_third_token,validate_third_token},
+  auth::infra::spotify::SpotifyAuthConfig,
   users::{infra::repo::MongoUserRepo}
 };
 
 use api::modules::whishlists::infra::{
   repo::{collection::MongoCollectionRepo, item::MongoItemRepo},
-  endpoints::collection::{get_collections, create_collection, update_collection, delete_collection}
+  endpoints::collection::{get_collections, create_collection, update_collection, delete_collection},
+  endpoints::item::{create_item, update_item, delete_item}
 };
 
 
@@ -34,16 +36,38 @@ async fn rocket() -> _ {
     collection: collection_repo,
     item: item_repo
   };
+
+  let spotify_settings = SpotifyAuthConfig {
+    client: settings.spotify.client,
+    secret: settings.spotify.secret,
+    callback: settings.spotify.callback
+  };
+
+  let state = AppState {
+    repositories: repositories,
+    oauths: OauthsConfig{
+      spotify: spotify_settings
+    },
+    jwt: JwtConfig {
+      secret: settings.jwt.secret
+    }
+  };
   
   build()
-    .manage(repositories)
+    .manage(state)
     .mount("/api/auth", routes![
-      get_third_token
+      get_third_token,
+      validate_third_token
     ])
     .mount("/api/wishlists", routes![
       get_collections,
       create_collection,
       update_collection,
       delete_collection
+    ])
+    .mount("/api/items", routes![
+      create_item,
+      update_item,
+      delete_item
     ])
 }

@@ -1,7 +1,7 @@
 use chrono::Utc;
 use jsonwebtoken::{encode, decode, Header, Algorithm, EncodingKey, DecodingKey, Validation, errors::Error};
 
-use crate::modules::auth::{domain::Claim};
+use crate::modules::auth::{dtos::Claim};
 
 
 pub struct JwtManager {

@@ -37,8 +37,8 @@ impl Manager {
 
   pub fn find(&self, id: String) -> Result<User, String> {
     match self.repo.find(id) {
-      Ok(u) => {Ok(u)},
-      Err(e) => { return Err(format!("{}", e))}
+      Some(u) => {Ok(u)},
+      None => { return Err("Not found".to_string())}
     }
   }
 }
