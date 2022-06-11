@@ -8,3 +8,13 @@ This backend app enables the possibilitie of sharing, cloud saving and collabora
 - [Project structure](./README/structure.md)
 - [Tests](./README/test.md)
 
+
+## TODO
+- [ ] Fix item toggle obtained 
+- [ ] Filter collections and items by user
+- [ ] Move Allowed hosts to env vars
+- [ ] Error managment improvment
+- [ ] Log system
+- [ ] Dockerize app
+- [ ] Add Architechture docs
+- [ ] Add insomnia endpoints
