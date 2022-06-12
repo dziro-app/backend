@@ -13,17 +13,6 @@ pub struct Manager {
 }
 
 impl Manager {
-  pub fn list(&self) -> Result<Vec<Item>, String> {
-    match self.repo.list() {
-      Ok(c) => {return Ok(c)},
-      Err(e) => {
-        // todo: replace with logger lib
-        println!("{}", e);
-        return Err(e);
-      }
-    }
-  }
-
   pub fn create(&self, collection_id: String, data: CreateItem) -> Result<Item, String> {
     // Validates required data
     match data.validate() {
@@ -67,6 +56,35 @@ impl Manager {
         return Err(e);
       }
     }
+  }
+
+  pub fn toggle_obtained(&self, id: String) -> Result<Item, String> {
+    let original = match self.repo.find(id) {
+      Ok(found) => {found},
+      Err(e) => {
+        // todo: replace with logger lib
+        println!("{}", e);
+        return Err(e);
+      }
+    };
+
+    let update = UpdateItem {
+      title: None,
+      image: None,
+      website: None,
+      price: None,
+      obtained: Some(!original.obtained)
+    };
+
+    match self.repo.update(original.id, update) {
+      Ok(updated) => {return Ok(updated)},
+      Err(e) => {
+        // todo: replace with logger lib
+        println!("{}", e);
+        return Err(e);
+      }
+    }
+
   }
 
   pub fn delete(&self, id: String) -> Result<(), String> {

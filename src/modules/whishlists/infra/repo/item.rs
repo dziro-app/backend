@@ -17,8 +17,19 @@ pub struct MongoItemRepo {
 
 impl ItemRepository for MongoItemRepo {
 
-  fn list(&self) -> Result<Vec<Item>, String> {
-    todo!();
+  fn find(&self, id: String) -> Result<Item, String> {
+    let collection = self.client.db.collection::<Collection>(COLLECTION_NAME);
+    match collection.find_one(doc! { "items.id": id.clone() }, None).unwrap() {
+      Some(c) => {
+        let updated: Vec<Item>= c.items
+          .into_iter()
+          .filter(|item| item.id == id)
+          .collect();
+        
+        return Ok(updated[0].clone());
+      },
+      None => {return Err(format!("Not found"))}
+    }
   }
 
   fn save(&self, collection_id: String, data: Item) -> Result<Item, String> {
@@ -99,6 +110,7 @@ impl ItemRepository for MongoItemRepo {
       None => {return Err(format!("Not found"))}
     }
   }
+
 
   fn delete(&self, id: String) -> Result<(), String> {
     let collection = self.client.db.collection::<Collection>(COLLECTION_NAME);

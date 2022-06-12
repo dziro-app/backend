@@ -60,6 +60,24 @@ pub fn update_item(state: &State<AppState>, id: String, partial: Json<UpdateItem
   }
 }
 
+#[patch("/<id>/toggle_obtained")]
+pub fn toggle_obtained(state: &State<AppState>, id: String,) -> status::Custom<content::RawJson<String>> {
+  let manager  = item::Manager{
+    repo: Box::new(state.repositories.item.clone())
+  };
+
+  match manager.toggle_obtained(id) {
+    Ok(l) => {
+      let content = serde_json::to_string(&l).unwrap();
+      return status::Custom(Status::Ok, content::RawJson(content));
+    },
+    Err(e) => { 
+      println!("{}", e);
+      return status::Custom(Status::NotFound, content::RawJson(String::from("{}")));
+    }
+  }
+}
+
 #[delete("/<id>")]
 pub fn delete_item(state: &State<AppState>, id: String) -> status::Custom<content::RawJson<String>> {
 

@@ -14,7 +14,7 @@ pub trait CollectionRepository {
 }
 
 pub trait ItemRepository {
-  fn list(&self) -> Result<Vec<Item>, String>;
+  fn find(&self, id: String) -> Result<Item, String>;
   fn save(&self, collection_id: String, data: Item) -> Result<Item, String>;
   fn update(&self, id: String, data: UpdateItem) -> Result<Item, String>;
   fn delete(&self, id: String) -> Result<(), String>;
