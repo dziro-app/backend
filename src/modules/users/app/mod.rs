@@ -1,4 +1,3 @@
-use uuid::Uuid;
 use validator::{Validate};
 use chrono::prelude::Local;
 
@@ -22,7 +21,7 @@ impl Manager {
     };
 
     let user = User {
-      id: String::from(Uuid::new_v4().to_string()),
+      id: data.id,
       profile_pic: data.profile_pic,
       username: data.username,
       active_subscription: false,

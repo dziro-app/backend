@@ -9,7 +9,8 @@ use crate::modules::whishlists::{
 };
 
 pub struct Manager {
-  pub repo: Box<dyn ItemRepository> 
+  pub repo: Box<dyn ItemRepository>,
+  pub user_id: String
 }
 
 impl Manager {
@@ -32,7 +33,7 @@ impl Manager {
       created_at: String::from(Local::now().to_string())
     };
 
-    match self.repo.save(collection_id, new_collection) {
+    match self.repo.save(self.user_id.clone(), collection_id, new_collection) {
       Ok(d) => {return Ok(d);},
       Err(e) => {
         return Err(format!("{}", e));
@@ -48,7 +49,7 @@ impl Manager {
       }
     };
     
-    match self.repo.update(id, data) {
+    match self.repo.update(self.user_id.clone(), id, data) {
       Ok(updated) => {return Ok(updated)},
       Err(e) => {
         // todo: replace with logger lib
@@ -59,7 +60,7 @@ impl Manager {
   }
 
   pub fn toggle_obtained(&self, id: String) -> Result<Item, String> {
-    let original = match self.repo.find(id) {
+    let original = match self.repo.find(self.user_id.clone(), id) {
       Ok(found) => {found},
       Err(e) => {
         // todo: replace with logger lib
@@ -76,7 +77,7 @@ impl Manager {
       obtained: Some(!original.obtained)
     };
 
-    match self.repo.update(original.id, update) {
+    match self.repo.update(self.user_id.clone(), original.id, update) {
       Ok(updated) => {return Ok(updated)},
       Err(e) => {
         // todo: replace with logger lib
@@ -88,7 +89,7 @@ impl Manager {
   }
 
   pub fn delete(&self, id: String) -> Result<(), String> {
-    match self.repo.delete(id) {
+    match self.repo.delete(self.user_id.clone(), id) {
       Ok(_) => { Ok (())},
       Err(e) => {
         // todo: replace with logger lib

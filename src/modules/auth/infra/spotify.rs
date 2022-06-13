@@ -74,7 +74,7 @@ pub async fn get_auth_token(config: SpotifyAuthConfig, code: String) -> Result<S
     .await {
       Ok(r) => { 
         if r.status() != StatusCode::OK {
-          return Err(Error::Authorization("Bad token code".to_string()));
+          return Err(Error::Authorization("Bad code".to_string()));
         } else { r }
       }
       Err(e) => {
@@ -100,7 +100,7 @@ pub async fn get_user_info(token: SpotifyToken) -> Result<SpotifyUser, Error> {
     .await {
       Ok(r) => { 
         if r.status() != StatusCode::OK {
-          return Err(Error::Authorization("Bad token code".to_string()));
+          return Err(Error::Authorization("Bad token".to_string()));
         } else { r }
       }
       Err(e) => {

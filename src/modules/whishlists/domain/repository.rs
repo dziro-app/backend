@@ -7,15 +7,15 @@ use crate::modules::whishlists::{
 
 
 pub trait CollectionRepository {
-  fn list(&self) -> Result<Vec<Collection>, String>;
+  fn list(&self, user_id: String) -> Result<Vec<Collection>, String>;
   fn save(&self, data: Collection) -> Result<Collection, String>;
-  fn update(&self, id: String, data: UpdateCollection) -> Result<Collection, String>;
-  fn delete(&self, id: String) -> Result<(), String>;
+  fn update(&self, user_id: String, id: String, data: UpdateCollection) -> Result<Collection, String>;
+  fn delete(&self, user_id: String, id: String) -> Result<(), String>;
 }
 
 pub trait ItemRepository {
-  fn find(&self, id: String) -> Result<Item, String>;
-  fn save(&self, collection_id: String, data: Item) -> Result<Item, String>;
-  fn update(&self, id: String, data: UpdateItem) -> Result<Item, String>;
-  fn delete(&self, id: String) -> Result<(), String>;
+  fn find(&self, user_id: String, id: String) -> Result<Item, String>;
+  fn save(&self, user_id: String, collection_id: String, data: Item) -> Result<Item, String>;
+  fn update(&self, user_id: String, id: String, data: UpdateItem) -> Result<Item, String>;
+  fn delete(&self, user_id: String, id: String) -> Result<(), String>;
 }

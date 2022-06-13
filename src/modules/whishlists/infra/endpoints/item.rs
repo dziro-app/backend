@@ -6,11 +6,15 @@ use crate::infra::state::AppState;
 use crate::modules::whishlists::app::item;
 use crate::modules::whishlists::dtos::item::{CreateItem, UpdateItem};
 
+use crate::modules::auth::infra::guards::AuthenticatedUser;
+
+
 
 #[post("/<collection_id>", format="application/json", data="<create>")]
-pub fn create_item(state: &State<AppState>, collection_id: String, create: Json<CreateItem>) -> status::Custom<content::RawJson<String>> {
+pub fn create_item(state: &State<AppState>, collection_id: String, create: Json<CreateItem>, user: AuthenticatedUser) -> status::Custom<content::RawJson<String>> {
   let manager  = item::Manager{
-    repo: Box::new(state.repositories.item.clone())
+    repo: Box::new(state.repositories.item.clone()),
+    user_id: user.id
   };
 
   let data = CreateItem {
@@ -33,10 +37,11 @@ pub fn create_item(state: &State<AppState>, collection_id: String, create: Json<
 }
 
 #[patch("/<id>", format="application/json", data="<partial>")]
-pub fn update_item(state: &State<AppState>, id: String, partial: Json<UpdateItem>) -> status::Custom<content::RawJson<String>> {
+pub fn update_item(state: &State<AppState>, id: String, partial: Json<UpdateItem>, user: AuthenticatedUser) -> status::Custom<content::RawJson<String>> {
 
   let manager  = item::Manager{
-    repo: Box::new(state.repositories.item.clone())
+    repo: Box::new(state.repositories.item.clone()),
+    user_id: user.id
   };
 
   let data = UpdateItem {
@@ -61,9 +66,10 @@ pub fn update_item(state: &State<AppState>, id: String, partial: Json<UpdateItem
 }
 
 #[patch("/<id>/toggle_obtained")]
-pub fn toggle_obtained(state: &State<AppState>, id: String,) -> status::Custom<content::RawJson<String>> {
+pub fn toggle_obtained(state: &State<AppState>, id: String, user: AuthenticatedUser) -> status::Custom<content::RawJson<String>> {
   let manager  = item::Manager{
-    repo: Box::new(state.repositories.item.clone())
+    repo: Box::new(state.repositories.item.clone()),
+    user_id: user.id
   };
 
   match manager.toggle_obtained(id) {
@@ -79,10 +85,11 @@ pub fn toggle_obtained(state: &State<AppState>, id: String,) -> status::Custom<c
 }
 
 #[delete("/<id>")]
-pub fn delete_item(state: &State<AppState>, id: String) -> status::Custom<content::RawJson<String>> {
+pub fn delete_item(state: &State<AppState>, id: String, user: AuthenticatedUser) -> status::Custom<content::RawJson<String>> {
 
   let manager  = item::Manager{
-    repo: Box::new(state.repositories.item.clone())
+    repo: Box::new(state.repositories.item.clone()),
+    user_id: user.id
   };
 
   match manager.delete(id) {

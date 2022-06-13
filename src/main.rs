@@ -54,7 +54,10 @@ async fn rocket() ->  _ {
     }
   };
 
-  let allowed_origins = AllowedOrigins::some_exact(&["http://localhost:3000"]);
+  let allowed_origins = AllowedOrigins::some_exact(&[
+    "http://localhost:3000",
+    "http://192.168.100.70:3000"
+  ]);
 
   let cors = rocket_cors::CorsOptions {
     allowed_origins,

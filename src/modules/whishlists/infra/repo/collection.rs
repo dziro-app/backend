@@ -18,10 +18,10 @@ pub struct MongoCollectionRepo {
 
 impl CollectionRepository for MongoCollectionRepo {
 
-  fn list(&self) -> Result<Vec<Collection>, String> {
+  fn list(&self, user_id: String) -> Result<Vec<Collection>, String> {
     let mut retrived_collections: Vec<Collection> = Vec::new();
     let collection = self.client.db.collection::<Collection>(COLLECTION_NAME);
-    let cursor = match collection.find(doc! { }, None) {
+    let cursor = match collection.find(doc!{"owner_id": user_id}, None) {
       Ok(c) => {c},
       Err(e) => {
         return Err(format!("{}", e));
@@ -52,7 +52,7 @@ impl CollectionRepository for MongoCollectionRepo {
 
   }
 
-  fn update(& self, id: String, data: UpdateCollection) -> Result<Collection, String> {
+  fn update(& self, user_id: String, id: String, data: UpdateCollection) -> Result<Collection, String> {
     let collection = self.client.db.collection::<Collection>(COLLECTION_NAME);
     let options = FindOneAndUpdateOptions::builder().return_document(ReturnDocument::After).build();
 
@@ -77,7 +77,7 @@ impl CollectionRepository for MongoCollectionRepo {
 
     update.insert("$set", partial);
 
-    match collection.find_one_and_update(doc! { "id": id }, update, options) {
+    match collection.find_one_and_update(doc! { "id": id, "owner_id": user_id }, update, options) {
       Ok(result) => {
         match result {
           Some(c) => { return Ok(c)},
@@ -89,9 +89,9 @@ impl CollectionRepository for MongoCollectionRepo {
 
   }
 
-  fn delete(& self, id: String) -> Result<(), String> {
+  fn delete(& self, user_id: String, id: String) -> Result<(), String> {
     let collection = self.client.db.collection::<Collection>(COLLECTION_NAME);
-    match collection.delete_one(doc! { "id": id}, None) {
+    match collection.delete_one(doc! { "id": id, "owner_id": user_id}, None) {
       Ok(r) => {
         if r.deleted_count > 0 {
           return Ok(())

@@ -9,12 +9,13 @@ use crate::modules::whishlists::{
 };
 
 pub struct Manager {
-  pub repo: Box<dyn CollectionRepository> 
+  pub repo: Box<dyn CollectionRepository>,
+  pub user_id: String
 }
 
 impl Manager {
   pub fn list(&self) -> Result<Vec<Collection>, String> {
-    match self.repo.list() {
+    match self.repo.list(self.user_id.clone()) {
       Ok(c) => {return Ok(c)},
       Err(e) => {
         // todo: replace with logger lib
@@ -39,7 +40,7 @@ impl Manager {
       color: data.color,
       emoji: data.emoji,
       items: Vec::new(),
-      owner_id: String::from(""),
+      owner_id: self.user_id.clone(),
       created_at: String::from(Local::now().to_string())
     };
 
@@ -59,7 +60,7 @@ impl Manager {
       }
     };
     
-    match self.repo.update(id, data) {
+    match self.repo.update(self.user_id.clone(), id, data) {
       Ok(updated) => {return Ok(updated)},
       Err(e) => {
         // todo: replace with logger lib
@@ -70,7 +71,7 @@ impl Manager {
   }
 
   pub fn delete(&self, id: String) -> Result<(), String> {
-    match self.repo.delete(id) {
+    match self.repo.delete(self.user_id.clone(), id) {
       Ok(_) => { Ok (())},
       Err(e) => {
         // todo: replace with logger lib

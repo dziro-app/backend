@@ -10,7 +10,7 @@ This backend app enables the possibilitie of sharing, cloud saving and collabora
 
 
 ## TODO
-- [ ] Fix item toggle obtained 
+- [X] Fix item toggle obtained 
 - [ ] Filter collections and items by user
 - [ ] Move Allowed hosts to env vars
 - [ ] Error managment improvment

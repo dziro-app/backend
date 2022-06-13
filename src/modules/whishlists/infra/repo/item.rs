@@ -17,9 +17,9 @@ pub struct MongoItemRepo {
 
 impl ItemRepository for MongoItemRepo {
 
-  fn find(&self, id: String) -> Result<Item, String> {
+  fn find(&self, user_id: String, id: String) -> Result<Item, String> {
     let collection = self.client.db.collection::<Collection>(COLLECTION_NAME);
-    match collection.find_one(doc! { "items.id": id.clone() }, None).unwrap() {
+    match collection.find_one(doc! {"owner_id": user_id,  "items.id": id.clone() }, None).unwrap() {
       Some(c) => {
         let updated: Vec<Item>= c.items
           .into_iter()
@@ -32,7 +32,7 @@ impl ItemRepository for MongoItemRepo {
     }
   }
 
-  fn save(&self, collection_id: String, data: Item) -> Result<Item, String> {
+  fn save(&self, user_id: String, collection_id: String, data: Item) -> Result<Item, String> {
     let collection = self.client.db.collection::<Collection>(COLLECTION_NAME);
 
     let return_data = data.clone();
@@ -51,7 +51,7 @@ impl ItemRepository for MongoItemRepo {
       }
     };
 
-    match collection.find_one_and_update(doc! { "id": collection_id }, update, None) {
+    match collection.find_one_and_update(doc! { "id": collection_id, "owner_id": user_id}, update, None) {
       Ok(result) => {
         match result {
           Some(_) => { return Ok(return_data)},
@@ -62,7 +62,7 @@ impl ItemRepository for MongoItemRepo {
     }
   }
 
-  fn update(&self, id: String, data: UpdateItem) -> Result<Item, String> {
+  fn update(&self, user_id: String,  id: String, data: UpdateItem) -> Result<Item, String> {
     let collection = self.client.db.collection::<Collection>(COLLECTION_NAME);
     let options = FindOneAndUpdateOptions::builder()
       .return_document(ReturnDocument::After)
@@ -98,7 +98,7 @@ impl ItemRepository for MongoItemRepo {
 
     update.insert("$set", partial);
     
-    match collection.find_one_and_update(doc! { "items.id": id.clone() }, update, options).unwrap() {
+    match collection.find_one_and_update(doc! { "owner_id": user_id, "items.id": id.clone() }, update, options).unwrap() {
       Some(c) => {
         let updated: Vec<Item>= c.items
           .into_iter()
@@ -112,7 +112,7 @@ impl ItemRepository for MongoItemRepo {
   }
 
 
-  fn delete(&self, id: String) -> Result<(), String> {
+  fn delete(&self, user_id: String, id: String) -> Result<(), String> {
     let collection = self.client.db.collection::<Collection>(COLLECTION_NAME);
     let options = FindOneAndUpdateOptions::builder()
       .return_document(ReturnDocument::After)
@@ -123,7 +123,7 @@ impl ItemRepository for MongoItemRepo {
     };
 
 
-    match collection.find_one_and_update(doc! { "items.id": id }, delete, options).unwrap() {
+    match collection.find_one_and_update(doc! { "owner_id": user_id, "items.id": id }, delete, options).unwrap() {
       Some(_) => {
         return Ok(());
       },
