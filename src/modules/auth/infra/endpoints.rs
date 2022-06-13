@@ -14,6 +14,8 @@ use crate::modules::users::{
   dtos::CreateUser
 };
 
+use super::spotify::SpotifyUserImage;
+
 
 
 #[derive(Serialize)]
@@ -54,11 +56,18 @@ pub async fn validate_third_token(third_api: String, code_info: Json<CodeInfo>, 
     "spotify" => {
       let config = state.oauths.spotify.clone();
       let token = spotify::get_auth_token(config, code_info.code.clone()).await.unwrap();
-      let user_data = spotify::get_user_info(token).await.unwrap();
+      let mut user_data = spotify::get_user_info(token).await.unwrap();
 
       let user_manager = UserManager {
         repo: Box::new(state.repositories.user.clone())
       };
+
+      if user_data.images.len() == 0 {
+        let default_image = SpotifyUserImage {
+          url: "https://tresubresdobles.com/wp-content/uploads/2021/04/skft-23aff38e10ee3c4e430a1f3450c4a01d.jpeg".to_string()
+        };
+        user_data.images.push(default_image);
+      }
 
       let user = match user_manager.find(user_data.id.clone()) {
         Ok(u) => {u},
