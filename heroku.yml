@@ -3,4 +3,4 @@ setup:
     ROCKET_port: $PORT
 build:
   docker:
-    web: docker/heroku.dockerfile
+    web: heroku.dockerfile
