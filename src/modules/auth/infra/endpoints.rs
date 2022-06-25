@@ -1,12 +1,12 @@
 use serde_json;
 use serde::{Serialize, Deserialize};
 use rocket::serde::json::{Json};
-use rocket::{get, post, State, http::{Status, Cookie, CookieJar}, response::{content, status}};
+use rocket::{get, post, State, http::{Status, Cookie, SameSite, CookieJar}, response::{content, status}};
 
 use crate::infra::state::AppState;
 use crate::modules::auth::{
   infra::spotify,
-  app::jwt::JwtManager,
+  app::jwt::{JwtManager, TokenType},
   dtos::{JwtResponse, UserResponse}
 };
 use crate::modules::users::{
@@ -89,21 +89,25 @@ pub async fn validate_third_token(third_api: String, code_info: Json<CodeInfo>, 
 
       let jwt_manager = JwtManager::new(state.jwt.secret.clone());
 
-      let access_token = match jwt_manager.create_jwt(user.id.clone()) {
+      let access_token = match jwt_manager.create_jwt(user.id.clone(), TokenType::Access) {
         Ok(c) => {c},
         Err(e) => { 
           println!("{}", e);
           return status::Custom(Status::InternalServerError, content::RawJson(String::from("{}"))); }
       };
 
-      let refresh_token = match jwt_manager.create_jwt(user.id) {
+      let refresh_token = match jwt_manager.create_jwt(user.id, TokenType::Refresh) {
         Ok(c) => {c},
         Err(e) => { 
           println!("{}", e);
           return status::Custom(Status::InternalServerError, content::RawJson(String::from("{}"))); }
       };
 
-      cookies.add(Cookie::new("refresh_token", refresh_token));
+      let mut cookie = Cookie::build("refresh_token", refresh_token).finish();
+
+      cookie.set_same_site(SameSite::None);
+
+      cookies.add(cookie);
 
       let response = JwtResponse {
         access_token: access_token,
@@ -122,3 +126,50 @@ pub async fn validate_third_token(third_api: String, code_info: Json<CodeInfo>, 
   };
 
 }
+
+
+#[post("/refresh")]
+pub fn refresh_token(state: &State<AppState>, cookies: &CookieJar<'_>) -> status::Custom<content::RawJson<String>> {
+
+  let refr = match cookies.get("refresh_token") {
+    Some(t) => {t.value()},
+    None => {
+      return status::Custom(Status::BadRequest, content::RawJson(String::from("{}")));
+    }
+  };
+
+  let jwt_manager = JwtManager::new(state.jwt.secret.clone());
+
+  let claims = match jwt_manager.validate_jwt(refr.to_string()) {
+    Ok(c) => {c},
+    Err(e) => {
+      println!("{}", e);
+      return status::Custom(Status::BadRequest, content::RawJson(String::from("{}")));
+    }
+  };
+
+
+  let access_token = match jwt_manager.create_jwt(claims.sub.clone(), TokenType::Access) {
+    Ok(c) => {c},
+    Err(e) => { 
+      println!("{}", e);
+      return status::Custom(Status::InternalServerError, content::RawJson(String::from("{}"))); }
+  };
+
+  let refresh_token = match jwt_manager.create_jwt(claims.sub, TokenType::Refresh) {
+    Ok(c) => {c},
+    Err(e) => { 
+      println!("{}", e);
+      return status::Custom(Status::InternalServerError, content::RawJson(String::from("{}"))); }
+  };
+
+  let mut cookie = Cookie::build("refresh_token", refresh_token).finish();
+
+  cookie.set_same_site(SameSite::None);
+
+  cookies.add(cookie);
+
+  let content = format!("{{ \"access_token\": \"{}\" }}", access_token);
+
+  return status::Custom(Status::Ok, content::RawJson(content));
+} 

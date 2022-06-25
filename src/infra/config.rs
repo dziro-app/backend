@@ -5,6 +5,11 @@ use serde::{Deserialize};
 
 
 #[derive(Debug, Deserialize)]
+pub struct CORS {
+  pub allowed_hosts: String
+}
+
+#[derive(Debug, Deserialize)]
 pub struct JWT {
   pub secret: String
 }
@@ -14,7 +19,6 @@ pub struct Database {
   pub name: String,
   pub host: String
 }
-
 
 #[derive(Debug, Deserialize)]
 pub struct SpotifyConfig {
@@ -26,6 +30,7 @@ pub struct SpotifyConfig {
 pub struct Settings {
   pub database: Database,
   pub jwt: JWT,
+  pub cors: CORS,
   pub spotify: SpotifyConfig
 }
 
@@ -34,6 +39,7 @@ impl Settings {
   pub fn new() -> Result<Self, String> {
     dotenv().ok();
     
+    let cors_list = env::var("ALLOWED_HOSTS").expect("Missing allowed_hosts list");
     let jwt_secret =  env::var("JWT_SECRET").expect("Missing jwt secret");
     let db_host = env::var("DB_HOST").expect("Missing db host");
     let db_name =  env::var("DB_NAME").expect("Missing db name");
@@ -41,7 +47,11 @@ impl Settings {
     let spotify_client = env::var("SPOTIFY_CLIENT").expect("Missing spotify client");
     let spotify_secret = env::var("SPOTIFY_SECRET").expect("Missing spotify secret");
     let spotify_callback = env::var("SPOTIFY_CALLBACK").expect("Missing spotify callback");
+    
 
+    let cors = CORS {
+      allowed_hosts: cors_list
+    };
 
     let jwt = JWT {
       secret: jwt_secret
@@ -61,7 +71,8 @@ impl Settings {
     return Ok(Settings {
       database: db,
       jwt: jwt,
-      spotify: spotify_config
+      spotify: spotify_config,
+      cors: cors
     })
   }
 }

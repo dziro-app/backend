@@ -1,8 +1,14 @@
 use chrono::Utc;
 use jsonwebtoken::{encode, decode, Header, Algorithm, EncodingKey, DecodingKey, Validation, errors::Error};
 
+
 use crate::modules::auth::{dtos::Claim};
 
+
+pub enum TokenType {
+  Refresh,
+  Access
+}
 
 pub struct JwtManager {
   secret: String,
@@ -13,9 +19,19 @@ impl JwtManager {
     return JwtManager { secret: secret }
   }
 
-  pub fn create_jwt(&self, uid: String) -> Result<String, Error> {
+  pub fn create_jwt(&self, uid: String, token_type: TokenType) -> Result<String, Error> {
+
+    let duration = match token_type {
+      TokenType::Refresh => {
+        chrono::Duration::minutes(6)
+      },
+      TokenType::Access => {
+        chrono::Duration::minutes(5)
+      }
+    };
+
     let expiration = Utc::now()
-      .checked_add_signed(chrono::Duration::seconds(60))
+      .checked_add_signed(duration)
       .expect("valid timestamp")
       .timestamp();
   
@@ -54,7 +70,7 @@ mod auth {
     let secret = String::from("supersecret");
     let manager = JwtManager::new(secret);
 
-    let jwt = match manager.create_jwt(uuid.clone()) {
+    let jwt = match manager.create_jwt(uuid.clone(), TokenType::Access) {
       Ok(j) => {j}, 
       Err(e) => {
         panic!("{}", e);

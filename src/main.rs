@@ -4,7 +4,7 @@ use rocket_cors::{AllowedOrigins};
 use api::infra::state::{AppState, Repositories, OauthsConfig, JwtConfig};
 use api::infra::{config::Settings, sync_mongo::Connection};
 use api::modules::{
-  auth::infra::endpoints::{get_third_token,validate_third_token},
+  auth::infra::endpoints::{get_third_token,validate_third_token, refresh_token},
   auth::infra::spotify::SpotifyAuthConfig,
   users::{infra::repo::MongoUserRepo}
 };
@@ -54,10 +54,8 @@ async fn rocket() ->  _ {
     }
   };
 
-  let allowed_origins = AllowedOrigins::some_exact(&[
-    "http://localhost:3000",
-    "http://192.168.100.70:3000"
-  ]);
+  let allowed_hosts:  Vec<&str> = settings.cors.allowed_hosts.split(", ").collect();
+  let allowed_origins = AllowedOrigins::some_exact(&allowed_hosts);
 
   let cors = rocket_cors::CorsOptions {
     allowed_origins,
@@ -74,7 +72,8 @@ async fn rocket() ->  _ {
     .manage(state)
     .mount("/api/auth", routes![
       get_third_token,
-      validate_third_token
+      validate_third_token,
+      refresh_token
     ])
     .mount("/api/wishlists", routes![
       get_collections,
