@@ -1,6 +1,7 @@
 FROM rust:1.61.0-slim AS build
 WORKDIR /app
-RUN ls -lah
+RUN ls -lah ./
+RUN pwd
 COPY ./ /app/
 RUN apt-get update
 RUN apt-get install pkg-config libssl-dev -y
