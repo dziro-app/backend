@@ -1,0 +1,6 @@
+setup:
+  config:
+    ROCKET_port: $PORT
+build:
+  docker:
+    web: docker/heroku.dockerfile
