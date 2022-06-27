@@ -1,4 +1,4 @@
-use rocket::{launch, routes, build, http::Method};
+use rocket::{launch, routes, http::Method};
 use rocket_cors::{AllowedOrigins};
 
 use api::infra::state::{AppState, Repositories, OauthsConfig, JwtConfig};
@@ -68,8 +68,11 @@ async fn rocket() ->  _ {
   }
   .to_cors().expect("Bad cors config");
 
+
+  let figment = rocket::Config::figment()
+        .merge(("port", settings.server.port));
   
-  build()
+  rocket::custom(figment)
     .manage(state)
     .mount("/api/", routes![
       get_version

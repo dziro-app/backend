@@ -3,6 +3,10 @@ use std::env;
 use dotenv::dotenv;
 use serde::{Deserialize};
 
+#[derive(Debug, Deserialize)]
+pub struct Server {
+  pub port: u16
+}
 
 #[derive(Debug, Deserialize)]
 pub struct CORS {
@@ -28,6 +32,7 @@ pub struct SpotifyConfig {
 }
 #[derive(Debug, Deserialize)]
 pub struct Settings {
+  pub server: Server,
   pub database: Database,
   pub jwt: JWT,
   pub cors: CORS,
@@ -44,10 +49,15 @@ impl Settings {
     let db_host = env::var("DB_HOST").expect("Missing db host");
     let db_name =  env::var("DB_NAME").expect("Missing db name");
 
+    let app_port =  env::var("PORT").expect("Missing app port");
+
     let spotify_client = env::var("SPOTIFY_CLIENT").expect("Missing spotify client");
     let spotify_secret = env::var("SPOTIFY_SECRET").expect("Missing spotify secret");
     let spotify_callback = env::var("SPOTIFY_CALLBACK").expect("Missing spotify callback");
     
+    let server = Server {
+      port: app_port.parse().expect("bad port number")
+    };
 
     let cors = CORS {
       allowed_hosts: cors_list
@@ -69,6 +79,7 @@ impl Settings {
     };
 
     return Ok(Settings {
+      server: server,
       database: db,
       jwt: jwt,
       spotify: spotify_config,
