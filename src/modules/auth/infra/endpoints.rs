@@ -17,7 +17,6 @@ use crate::modules::users::{
 use super::spotify::SpotifyUserImage;
 
 
-
 #[derive(Serialize)]
 struct RedirectUrl {
   redirect: String

@@ -15,6 +15,7 @@ use api::modules::whishlists::infra::{
   endpoints::item::{create_item, update_item, toggle_obtained, delete_item}
 };
 
+use api::modules::api::infra::endpoints::get_version;
 
 #[launch]
 async fn rocket() ->  _ {
@@ -70,6 +71,9 @@ async fn rocket() ->  _ {
   
   build()
     .manage(state)
+    .mount("/api/", routes![
+      get_version
+    ])
     .mount("/api/auth", routes![
       get_third_token,
       validate_third_token,
