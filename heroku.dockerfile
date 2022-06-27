@@ -12,5 +12,6 @@ FROM debian:11.3-slim
 WORKDIR /dziro
 COPY --from=build /app/target/release/api /dziro
 RUN chmod +x /dziro/api
+RUN echo $PORT
 
 CMD ["/dziro/api"]
