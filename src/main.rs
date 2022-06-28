@@ -42,7 +42,8 @@ async fn rocket() ->  _ {
   let spotify_settings = SpotifyAuthConfig {
     client: settings.spotify.client,
     secret: settings.spotify.secret,
-    callback: settings.spotify.callback
+    callback: settings.spotify.callback,
+    state: settings.spotify.state
   };
 
   let state = AppState {

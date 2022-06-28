@@ -13,7 +13,8 @@ pub enum Error {
 pub struct SpotifyAuthConfig {
   pub client: String,
   pub secret: String,
-  pub callback: String
+  pub callback: String,
+  pub state: String
 }
 
 #[derive(Deserialize, Debug)]
@@ -41,10 +42,10 @@ pub fn get_token_url(config: SpotifyAuthConfig) -> String {
   let scopes = vec!["user-read-private".to_string()];
   
   let mut url =  String::from("https://accounts.spotify.com/authorize?");
-  let response_type = String::from("response_type=code&&");
-  let client_id = format!("client_id={}&&", config.client);
-  let redirect_uri = format!("redirect_uri={}&&", config.callback.clone());
-  let state = String::from("state=somerandomstatre&&");
+  let response_type = String::from("response_type=code&");
+  let client_id = format!("client_id={}&", config.client);
+  let redirect_uri = format!("redirect_uri={}&", config.callback.clone());
+  let state = format!("state={}&", config.state.clone());
   let scopes = format!("scopes={}", String::from(scopes.join(" ")));
   
   url.push_str(&client_id);
