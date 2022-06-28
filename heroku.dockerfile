@@ -10,6 +10,7 @@ RUN cargo build --release
 
 FROM debian:11.3-slim
 WORKDIR /dziro
+RUN apt-get update && apt-get install curl -y
 COPY --from=build /app/target/release/api /dziro
 RUN chmod +x /dziro/api
 
