@@ -14,8 +14,6 @@ use crate::modules::users::{
   dtos::CreateUser
 };
 
-use super::spotify::SpotifyUserImage;
-
 
 #[derive(Serialize)]
 struct RedirectUrl {
@@ -53,19 +51,20 @@ pub fn get_third_token(third_api: String,  state: &State<AppState>) ->  status::
 pub async fn validate_third_token(third_api: String, code_info: Json<CodeInfo>, state: &State<AppState>, cookies: &CookieJar<'_>) ->  status::Custom<content::RawJson<String>>  {
  match third_api.as_str() {
     "spotify" => {
+      
+      let profile_image:String;
       let config = state.oauths.spotify.clone();
       let token = spotify::get_auth_token(config, code_info.code.clone()).await.unwrap();
-      let mut user_data = spotify::get_user_info(token).await.unwrap();
-
+      let user_data = spotify::get_user_info(token).await.unwrap();
+      
       let user_manager = UserManager {
         repo: Box::new(state.repositories.user.clone())
       };
-
+      
       if user_data.images.len() == 0 {
-        let default_image = SpotifyUserImage {
-          url: "https://tresubresdobles.com/wp-content/uploads/2021/04/skft-23aff38e10ee3c4e430a1f3450c4a01d.jpeg".to_string()
-        };
-        user_data.images.push(default_image);
+        profile_image = "https://tresubresdobles.com/wp-content/uploads/2021/04/skft-23aff38e10ee3c4e430a1f3450c4a01d.jpeg".to_string();
+      } else {
+        profile_image = user_data.images[0].url.clone()
       }
 
       let user = match user_manager.find(user_data.id.clone()) {
@@ -73,8 +72,7 @@ pub async fn validate_third_token(third_api: String, code_info: Json<CodeInfo>, 
         Err(_) => {
           let new_user = CreateUser {
             id: user_data.id,
-            username: user_data.display_name,
-            profile_pic: user_data.images[0].url.clone()
+            username: user_data.display_name
           };
           match user_manager.create(new_user) {
             Ok(u) => {u},
@@ -112,7 +110,7 @@ pub async fn validate_third_token(third_api: String, code_info: Json<CodeInfo>, 
         access_token: access_token,
         user: UserResponse {
           username: user.username,
-          profile: user.profile_pic
+          profile: profile_image.clone()
         }
       };
 

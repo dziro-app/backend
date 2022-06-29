@@ -22,7 +22,6 @@ impl Manager {
 
     let user = User {
       id: data.id,
-      profile_pic: data.profile_pic,
       username: data.username,
       active_subscription: false,
       created_at: String::from(Local::now().to_string())
