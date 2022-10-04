@@ -67,7 +67,7 @@ read -n 1 INSTALLI;
 
 if [ -z $INSTALLI ] || [ $INSTALLI == "y" ] ; then
   echo -e "⚙️ ${YELLOW} Installing service for Dziro ... ${RESET}";
-  echo $outFile > "${SYSTEMDDIR}/dziro.service";
+  echo -e $outFile > "${SYSTEMDDIR}/dziro.service";
 fi
 
 echo -e "⚙️ ${YELLOW} Remeber to enable the service to start after reboot using ${GREEN} systemctl enable dziro.service ${RESET}"
