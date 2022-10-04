@@ -3,9 +3,9 @@ Description=Dziro backend app service
 After=network.target
 
 [Service]
-type=simple
+Type=simple
 Restart=always
-User=root
+User=$USER
 WorkingDirectory=$WD
 ExecStart=$APP
 
