@@ -1,0 +1,13 @@
+[Unit]
+Description=Dziro backend app service
+After=network.target
+
+[Service]
+type=simple
+Restart=always
+User=root
+WorkingDirectory=$WD
+ExecStart=$APP
+
+[Install]
+WantedBy=multi-user.target
