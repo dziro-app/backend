@@ -1,8 +1,7 @@
 #!/bin/bash
 
 ## Global variables
-# SYSTEMDDIR="/etc/systemd/system"
-SYSTEMDDIR="./"
+SYSTEMDDIR="/etc/systemd/system"
 WD="$(pwd)" # Working directory
 APP="$(pwd)/target/release/api" # App directory
 USER="$(whoami)" # User to run
