@@ -3,7 +3,7 @@
 ## Global variables
 SYSTEMDDIR="/etc/systemd/system"
 WD="$(pwd)" # Working directory
-APP="" # App directory
+APP="$(pwd)/target/release/api" # App directory
 USER="$(whoami)" # User to run
 
 ## Global colors
@@ -41,11 +41,15 @@ if ! [[ -z $WDI ]]; then
   fi
 fi
 
-echo -n -e "⌨️${GREEN}  Provide the app directory: ${RESET}";
-read APP;
-# Validate if file does not exist
-if ! [[ -s $APP ]]; then
-  die "File ${APP} does not exist."
+echo -n -e "⌨️${GREEN}  Provide the app directory ${RESET} [default:${APP}]: ";
+read APPI;
+if ! [[ -z $APPI ]]; then
+  # Validate if file does not exist
+  if ! [[ -s $APPI ]]; then
+    die "File ${APPI} does not exist."
+  else
+    APP=$APPI;
+  fi
 fi
 
 echo -e "⚙️ ${YELLOW} Generating service for Dziro ... ${RESET}";
@@ -59,7 +63,7 @@ outFile=$(cat ./systemD/dziro.service |
 echo -e "${BLUE}${outFile}${RESET}";
 
 echo -n -e "${GREEN}⌨️  Should try to installit under ${SYSTEMDDIR}${RESET} [default:y]: ";
-read INSTALLI;
+read -n 1 INSTALLI;
 
 if [ -z $INSTALLI ] || [ $INSTALLI == "y" ] ; then
   echo -e "⚙️ ${YELLOW} Installing service for Dziro ... ${RESET}";
