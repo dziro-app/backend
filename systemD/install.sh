@@ -1,6 +1,7 @@
 #!/bin/bash
 
 ## Global variables
+SYSTEMDDIR="/etc/systemd/system"
 WD="$(pwd)" # Working directory
 APP="" # App directory
 USER="$(whoami)" # User to run
@@ -18,7 +19,7 @@ function die {
   exit 1;
 }
 
-echo -e "⌨️${GREEN}  Provide the user that will run the app${RESET} [default:${USER}]:";
+echo -n -e "⌨️${GREEN}  Provide the user that will run the app${RESET} [default:${USER}]: ";
 read USERI;
 if ! [[ -z $USERI ]]; then
   id $USERI 2>&1 > /dev/null;
@@ -29,7 +30,7 @@ if ! [[ -z $USERI ]]; then
   fi
 fi
 
-echo -e "⌨️${GREEN}  Provide the working directory${RESET} [default:${WD}]:";
+echo -n -e "⌨️${GREEN}  Provide the working directory${RESET} [default:${WD}]: ";
 read WDI;
 if ! [[ -z $WDI ]]; then
   # Validate if working dir exists does not exist
@@ -40,7 +41,7 @@ if ! [[ -z $WDI ]]; then
   fi
 fi
 
-echo -e "⌨️${GREEN}  Provide the app directory: ${RESET}";
+echo -n -e "⌨️${GREEN}  Provide the app directory: ${RESET}";
 read APP;
 # Validate if file does not exist
 if ! [[ -s $APP ]]; then
@@ -50,7 +51,19 @@ fi
 echo -e "⚙️ ${YELLOW} Generating service for Dziro ... ${RESET}";
 
 # Use sed with pipe delimiter to avoid collisions with path slash
-cat ./systemD/dziro.service | 
+outFile=$(cat ./systemD/dziro.service | 
   sed "s|\$WD|$WD|g" | # replace working direcotry
   sed "s|\$USER|$USER|g" | # replace user
-  sed "s|\$APP|$APP|g"; # replace application to execute
+  sed "s|\$APP|$APP|g"); # replace application to execute
+
+echo -e "${BLUE}${outFile}${RESET}";
+
+echo -n -e "${GREEN}⌨️  Should try to installit under ${SYSTEMDDIR}${RESET} [default:y]: ";
+read INSTALLI;
+
+if [ -z $INSTALLI ] || [ $INSTALLI == "y" ] ; then
+  echo -e "⚙️ ${YELLOW} Installing service for Dziro ... ${RESET}";
+  echo $outFile > "${SYSTEMDDIR}/dziro.service";
+fi
+
+echo -e "⚙️ ${YELLOW} Remeber to enable the service to start after reboot using ${GREEN} systemctl enable dziro.service ${RESET}"
