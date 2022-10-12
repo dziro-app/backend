@@ -16,37 +16,18 @@ Tests are organized by modules and intention, for example:
 $ cargo test
 ```
 
-🔬 **Run all module unit tests**
-```bash
-$ cargo test whishlists::
-```
-
 
 🔬 **Show output**
 ```bash
 $ cargo test -- --show-output
-```
-🔬 **Run some integration tests**
-```bash
-$ cargo test --test whishlist_update -- --show-output --ignored
 ```
 
 ---
 
 ## **📖 Available module tests**
 
-- mongo
+- users
+- user_repository
 - whishlists
+- collection_repository
 
----
-
-## **⚠️ Important**
-
-The app containes *expensive tests*.
-
-Before runing them, be sure to have a mongodn similar to the one specified under docker/compose.yml file.
-
-🔬 **Run expensive tests**
-```bash
-$ cargo test -- --ignored
-```

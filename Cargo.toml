@@ -17,6 +17,7 @@ jsonwebtoken = "8.1.0"
 base64 = "0.13.0"
 rocket =  { version = "0.5.0-rc.1", features=["json"]}
 rocket_cors = "0.6.0-alpha1"
+mockall = "0.11.2"
 
 [dependencies.serde]
 version = "1.0.137"
