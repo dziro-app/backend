@@ -1,7 +1,7 @@
 use mongodb::{bson::{doc, Bson}, options::{FindOneAndUpdateOptions, ReturnDocument}};
 
 use crate::infra::sync_mongo::Connection;
-use crate::modules::whishlists::domain::repository::ItemRepository;
+use crate::modules::whishlists::domain::repositories::item::ItemRepository;
 use crate::modules::whishlists::{
   domain::entities::collection::Collection,
   domain::entities::item::Item,
