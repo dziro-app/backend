@@ -63,7 +63,6 @@ async fn rocket() ->  _ {
     allowed_origins,
 
     allowed_methods: vec![Method::Get, Method::Options, Method::Post, Method::Patch, Method::Delete].into_iter().map(From::from).collect(),
-    // allowed_headers: AllowedHeaders::some(&["Authorization", "Accept"]),
     allow_credentials: true,
     ..Default::default()
   }
