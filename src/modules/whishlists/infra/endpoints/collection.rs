@@ -28,7 +28,7 @@ pub fn get_collections(state: &State<AppState>, user: AuthenticatedUser) -> stat
 
 #[post("/", format="application/json", data="<create>")]
 pub fn create_collection(state: &State<AppState>, create: Json<CreateCollection>, user: AuthenticatedUser) -> status::Custom<content::RawJson<String>> {
-  let manager  = collection::Manager{
+  let manager = collection::Manager{
     repo: Box::new(state.repositories.collection.clone()),
     user_id: user.id
   };

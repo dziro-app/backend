@@ -5,7 +5,7 @@ use chrono::prelude::Local;
 use crate::modules::whishlists::{
   domain::entities::collection::Collection,
   dtos::collection::{CreateCollection, UpdateCollection},
-  domain::repository::CollectionRepository
+  domain::repositories::collection::CollectionRepository
 };
 
 pub struct Manager {

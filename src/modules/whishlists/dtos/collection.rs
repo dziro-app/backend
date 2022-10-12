@@ -54,7 +54,6 @@ mod whishlists {
   }
 
   #[test]
-
   fn ut_validate_update_collection_dto() {
     let collection = UpdateCollection {
       name: Some(String::from("Ropa")),
