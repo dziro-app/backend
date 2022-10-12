@@ -24,6 +24,7 @@ mod mongo {
   use crate::infra::config::Settings;
 
   #[test]
+  #[ignore = "mongodb disponibility"]
   fn ut_test_create_connection() {
     let s = Settings::new().unwrap();
     let _ = Connection::new(s.database.host, s.database.name);
