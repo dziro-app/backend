@@ -4,7 +4,7 @@ stages:
 
 Unit:
   stage: test
-  image: rust:1.64.0-alpine3.16
+  image: rust:1.64.0-slim
   before_script:
     - apt-get update
     - apt-get install pkg-config libssl-dev -y
@@ -13,7 +13,7 @@ Unit:
 
 RC:
   stage: build
-  image: rust:1.64.0-alpine3.16
+  image: rust:1.64.0-slim
   before_script:
     - apt-get update
     - apt-get install pkg-config libssl-dev -y
