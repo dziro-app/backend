@@ -15,6 +15,7 @@ This backend app enables the possibilitie of sharing, cloud saving and collabora
 - [X] Filter collections and items by user
 - [X] Move Allowed hosts to env vars
 - [X] Dockerize app
+- [X] Mock tests
 - [ ] Error managment improvment
 - [ ] Log system
 - [ ] Add Architechture docs
