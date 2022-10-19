@@ -1,6 +1,12 @@
+variables:
+  PACKAGE_VERSION: "${CI_COMMIT_TAG}"
+  LINUX_AMD64_BINARY: "dziro-linux-amd64-${PACKAGE_VERSION}"
+  PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/averto/${PACKAGE_VERSION}"
+
 stages:
   - test # Runs written tests
   - build # Create a deploy build
+  - release # Generate a release version
 
 Unit:
   stage: test
@@ -11,11 +17,38 @@ Unit:
   script:
     - cargo test
 
-RC:
+Compile:
   stage: build
   image: rust:1.64.0-slim
+  artifacts:
+    paths:
+      - target/release
   before_script:
     - apt-get update
     - apt-get install pkg-config libssl-dev -y
   script:
     - cargo build --release
+
+Upload:
+  stage: release
+  image: curlimages/curl:latest
+  rules:
+    - if: $CI_COMMIT_TAG && '$CI_COMMIT_REF_NAME == "main"'
+  script:
+    - |
+      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file target/release/api ${PACKAGE_REGISTRY_URL}/${LINUX_AMD64_BINARY}
+
+Release:
+  stage: release
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  rules:
+    - if: $CI_COMMIT_TAG && '$CI_COMMIT_REF_NAME == "main"'
+  before_script:
+    - echo $CI_COMMIT_TAG
+    - echo $PACKAGE_VERSION
+    - echo "${PACKAGE_REGISTRY_URL}/${LINUX_AMD64_BINARY}"
+  script:
+  - |
+    release-cli create --name "Release $CI_COMMIT_TAG" --tag-name $CI_COMMIT_TAG \
+      --assets-link "{\"name\":\"${LINUX_AMD64_BINARY}\",\"url\":\"${PACKAGE_REGISTRY_URL}/${LINUX_AMD64_BINARY}\"}"
+
