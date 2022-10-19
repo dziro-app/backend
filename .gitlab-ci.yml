@@ -11,6 +11,9 @@ stages:
 Unit:
   stage: test
   image: rust:1.64.0-slim
+  artifacts:
+    paths:
+      - target
   before_script:
     - apt-get update
     - apt-get install pkg-config libssl-dev -y
@@ -22,7 +25,7 @@ Compile:
   image: rust:1.64.0-slim
   artifacts:
     paths:
-      - target/release
+      - target
   before_script:
     - apt-get update
     - apt-get install pkg-config libssl-dev -y
@@ -32,6 +35,9 @@ Compile:
 Upload:
   stage: release
   image: curlimages/curl:latest
+  artifacts:
+    paths:
+      - target
   rules:
     - if: $CI_COMMIT_TAG && '$CI_COMMIT_REF_NAME == "main"'
   script:
