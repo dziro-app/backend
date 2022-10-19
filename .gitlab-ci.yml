@@ -46,8 +46,8 @@ upload:
     - |
       curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file target/release/api ${PACKAGE_REGISTRY_URL}/${LINUX_AMD64_BINARY}
 
-Release:
-  stage: release
+release:
+  stage: Release
   image: registry.gitlab.com/gitlab-org/release-cli:latest
   dependencies:
     - upload
