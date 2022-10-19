@@ -4,12 +4,12 @@ variables:
   PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/averto/${PACKAGE_VERSION}"
 
 stages:
-  - test # Runs written tests
-  - build # Create a deploy build
-  - release # Generate a release version
+  - Test # Runs written tests
+  - Build # Create a deploy build
+  - Release # Generate a release version
 
-Unit:
-  stage: test
+unit:
+  stage: Test
   image: rust:1.64.0-slim
   artifacts:
     paths:
@@ -20,8 +20,8 @@ Unit:
   script:
     - cargo test
 
-Compile:
-  stage: build
+compile:
+  stage: Build
   image: rust:1.64.0-slim
   artifacts:
     paths:
@@ -34,8 +34,8 @@ Compile:
   script:
     - cargo build --release
 
-Upload:
-  stage: release
+upload:
+  stage: Release
   image: curlimages/curl:latest
   artifacts:
     paths:
@@ -49,6 +49,8 @@ Upload:
 Release:
   stage: release
   image: registry.gitlab.com/gitlab-org/release-cli:latest
+  dependencies:
+    - upload
   rules:
     - if: $CI_COMMIT_TAG && '$CI_COMMIT_REF_NAME == "main"'
   before_script:
