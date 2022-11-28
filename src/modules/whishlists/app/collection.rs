@@ -44,6 +44,8 @@ impl Manager {
       created_at: String::from(Local::now().to_string())
     };
 
+    println!("{:?}", new_collection);
+
     match self.repo.save(new_collection) {
       Ok(d) => {return Ok(d);},
       Err(e) => {

@@ -38,8 +38,9 @@ pub fn create_collection(state: &State<AppState>, create: Json<CreateCollection>
       let content = serde_json::to_string(&l).unwrap();
       return status::Custom(Status::Created, content::RawJson(content));
     },
-    Err(_e) => { 
-      return status::Custom(Status::NotFound, content::RawJson(String::from("{}")));
+    Err(e) => { 
+      let error_msg = format!("{{\"errors\": \"{}\"}}", e);
+      return status::Custom(Status::InternalServerError, content::RawJson(error_msg));
     }
   }
 }

@@ -16,7 +16,7 @@ This backend app enables the possibilitie of sharing, cloud saving and collabora
 - [X] Move Allowed hosts to env vars
 - [X] Dockerize app
 - [X] Mock tests
+- [X] Add insomnia endpoints
 - [ ] Error managment improvment
 - [ ] Log system
 - [ ] Add Architechture docs
-- [ ] Add insomnia endpoints

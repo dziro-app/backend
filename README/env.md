@@ -9,5 +9,5 @@
 | SPOTIFY_CLIENT | Cliente de spotify | 
 | SPOTIFY_SECRET | Secret de spotify | 
 | SPOTIFY_CALLBACK | Callback de spotify | 
-| ROCKET_port | Puerto del api (8.8.8.8) | 
+| PORT | Puerto del api (8.8.8.8) | 
 | ROCKET_address | Dirección del api (0.0.0.0) |

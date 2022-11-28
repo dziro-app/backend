@@ -30,8 +30,8 @@ pub fn create_item(state: &State<AppState>, collection_id: String, create: Json<
       return status::Custom(Status::Created, content::RawJson(content));
     },
     Err(e) => {
-      println!("{}", e);
-      return status::Custom(Status::BadRequest, content::RawJson(String::from("{}")));
+      let error_msg = format!("{{ \"errors\": \"{}\"}}", e);
+      return status::Custom(Status::BadRequest, content::RawJson(error_msg));
     }
   }
 }

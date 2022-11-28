@@ -20,13 +20,13 @@ impl JwtManager {
   }
 
   pub fn create_jwt(&self, uid: String, token_type: TokenType) -> Result<String, Error> {
-
+    let session_minutes = 5;
     let duration = match token_type {
       TokenType::Refresh => {
-        chrono::Duration::minutes(6)
+        chrono::Duration::minutes(session_minutes)
       },
       TokenType::Access => {
-        chrono::Duration::minutes(5)
+        chrono::Duration::minutes(session_minutes + 1)
       }
     };
 
