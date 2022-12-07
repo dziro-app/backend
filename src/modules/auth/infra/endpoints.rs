@@ -170,3 +170,15 @@ pub fn refresh_token(state: &State<AppState>, cookies: &CookieJar<'_>) -> status
 
   return status::Custom(Status::Ok, content::RawJson(content));
 } 
+
+#[post("/logout")]
+pub fn clear_token(cookies: &CookieJar<'_>) -> status::Custom<content::RawJson<String>> {
+  let refr = match cookies.get("refresh_token") {
+    Some(t) => {t},
+    None => {
+      return status::Custom(Status::BadRequest, content::RawJson(String::from("{}")));
+    }
+  };
+  cookies.remove(refr.clone());
+  return status::Custom(Status::Ok, content::RawJson("{}".to_string()));
+}
