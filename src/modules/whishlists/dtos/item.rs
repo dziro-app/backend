@@ -12,6 +12,12 @@ lazy_static! {
  * Item data transfer object
 */
 
+#[derive(Deserialize, Validate)]
+pub struct ScrapItem {
+  #[validate(url)]
+  pub url: String
+}
+
 #[derive(Deserialize, Validate, Clone)]
 pub struct CreateItem {
   #[validate(length(min = 1))]

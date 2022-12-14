@@ -4,10 +4,16 @@ use rocket::{post, patch, delete, State, http::Status, response::{content, statu
 
 use crate::infra::state::AppState;
 use crate::modules::whishlists::app::item;
-use crate::modules::whishlists::dtos::item::{CreateItem, UpdateItem};
+use crate::modules::whishlists::dtos::item::{CreateItem, UpdateItem, ScrapItem};
 
 use crate::modules::auth::infra::guards::AuthenticatedUser;
 
+
+#[post("/scrapp", format="application/json", data="<scrap>")]
+pub fn scrap_item(scrap: Json<ScrapItem>) -> status::Custom<content::RawJson<String>> {
+  println!("{}", scrap.url);
+  return status::Custom(Status::Ok, content::RawJson(String::from("{}")));
+}
 
 
 #[post("/<collection_id>", format="application/json", data="<create>")]

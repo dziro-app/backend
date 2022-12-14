@@ -12,7 +12,7 @@ use api::modules::{
 use api::modules::whishlists::infra::{
   repo::{collection::MongoCollectionRepo, item::MongoItemRepo},
   endpoints::collection::{get_collections, create_collection, update_collection, delete_collection},
-  endpoints::item::{create_item, update_item, toggle_obtained, delete_item}
+  endpoints::item::{scrap_item, create_item, update_item, toggle_obtained, delete_item}
 };
 
 use api::modules::api::infra::endpoints::get_version;
@@ -90,6 +90,7 @@ async fn rocket() ->  _ {
       delete_collection
     ])
     .mount("/api/items", routes![
+      scrap_item,
       create_item,
       update_item,
       toggle_obtained,
