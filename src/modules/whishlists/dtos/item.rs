@@ -1,5 +1,5 @@
 use regex::Regex;
-use serde::{Deserialize};
+use serde::{Deserialize, Serialize};
 use validator::{Validate};
 
 
@@ -18,7 +18,7 @@ pub struct ScrapItem {
   pub url: String
 }
 
-#[derive(Deserialize, Validate, Clone)]
+#[derive(Deserialize, Serialize, Validate, Clone)]
 pub struct CreateItem {
   #[validate(length(min = 1))]
   pub title: String,

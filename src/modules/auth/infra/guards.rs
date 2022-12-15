@@ -20,7 +20,7 @@ impl<'r> FromRequest<'r> for AuthenticatedUser {
 
   async fn from_request(req: &'r Request<'_>) -> Outcome<Self, Self::Error> {
     let state = req.rocket().state::<AppState>().unwrap();
-    let manager = JwtManager::new(String::from(state.jwt.secret.clone()));
+    let manager = JwtManager::new(state.settings.jwt.secret.clone(), state.settings.jwt.expiration.clone());
 
     match req.headers().get_one("Authorization") {
       None => Outcome::Failure((Status::Unauthorized, LoginError::Missing)),

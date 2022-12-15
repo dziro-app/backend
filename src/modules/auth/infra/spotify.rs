@@ -9,7 +9,7 @@ pub enum Error {
   MismatchingResponse(String)
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug, Deserialize)]
 pub struct SpotifyAuthConfig {
   pub client: String,
   pub secret: String,

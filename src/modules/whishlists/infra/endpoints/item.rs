@@ -8,11 +8,46 @@ use crate::modules::whishlists::dtos::item::{CreateItem, UpdateItem, ScrapItem};
 
 use crate::modules::auth::infra::guards::AuthenticatedUser;
 
+use items::scrapper_client::ScrapperClient;
+use items::RetrieveUrlRequest;
 
-#[post("/scrapp", format="application/json", data="<scrap>")]
-pub fn scrap_item(scrap: Json<ScrapItem>) -> status::Custom<content::RawJson<String>> {
-  println!("{}", scrap.url);
-  return status::Custom(Status::Ok, content::RawJson(String::from("{}")));
+
+pub mod items {
+  tonic::include_proto!("items");
+}
+
+#[post("/scrap", format="application/json", data="<scrap>")]
+pub async fn scrap_item(scrap: Json<ScrapItem>, state: &State<AppState>, _user: AuthenticatedUser) -> status::Custom<content::RawJson<String>> {
+
+  let mut client = match ScrapperClient::connect(state.settings.scraper.address.clone()).await {
+    Ok(c) => c,
+    Err(_) => {
+      return status::Custom(Status::InternalServerError, content::RawJson(String::from("{}")));
+    }
+  };
+
+  let req = RetrieveUrlRequest {
+    url: scrap.url.clone()
+  };
+
+  match client.get_item(req).await {
+    Ok(i) => {
+      let res = CreateItem {
+        title:  i.get_ref().title.clone(),
+        image:  i.get_ref().image.clone(),
+        website:  i.get_ref().url.clone(),
+        price:  i.get_ref().price.clone()
+      };
+      let content = serde_json::to_string(&res).unwrap();
+      return status::Custom(Status::Ok, content::RawJson(content));
+    
+    },
+    Err(e) => {
+      println!("{}", e);
+      return status::Custom(Status::InternalServerError, content::RawJson(String::from("{}")));
+    }
+  }
+
 }
 
 

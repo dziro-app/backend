@@ -12,15 +12,16 @@ pub enum TokenType {
 
 pub struct JwtManager {
   secret: String,
+  expiration: i64
 }
 
 impl JwtManager {
-  pub fn new(secret: String) -> Self {
-    return JwtManager { secret: secret }
+  pub fn new(secret: String, expiration: i64) -> Self {
+    return JwtManager { secret, expiration }
   }
 
   pub fn create_jwt(&self, uid: String, token_type: TokenType) -> Result<String, Error> {
-    let session_minutes = 5;
+    let session_minutes = self.expiration;
     let duration = match token_type {
       TokenType::Refresh => {
         chrono::Duration::minutes(session_minutes)
@@ -68,7 +69,8 @@ mod auth {
   fn ut_test_jwt() {
     let uuid = String::from("e37f5ca9-fba1-46d9-a3ef-e80ada650784");
     let secret = String::from("supersecret");
-    let manager = JwtManager::new(secret);
+    let expiration: i64 = 5;
+    let manager = JwtManager::new(secret, expiration);
 
     let jwt = match manager.create_jwt(uuid.clone(), TokenType::Access) {
       Ok(j) => {j}, 

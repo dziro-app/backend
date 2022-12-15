@@ -30,7 +30,7 @@ pub struct CodeInfo {
 pub fn get_third_token(third_api: String,  state: &State<AppState>) ->  status::Custom<content::RawJson<String>>  {
   let url = match third_api.as_str() {
     "spotify" => {
-      let config = state.oauths.spotify.clone();
+      let config = state.settings.spotify.clone();
 
       spotify::get_token_url(config)
     },
@@ -53,7 +53,7 @@ pub async fn validate_third_token(third_api: String, code_info: Json<CodeInfo>, 
     "spotify" => {
       
       let profile_image:String;
-      let config = state.oauths.spotify.clone();
+      let config = state.settings.spotify.clone();
       let token = spotify::get_auth_token(config, code_info.code.clone()).await.unwrap();
       let user_data = spotify::get_user_info(token).await.unwrap();
       
@@ -84,7 +84,7 @@ pub async fn validate_third_token(third_api: String, code_info: Json<CodeInfo>, 
         }
       };
 
-      let jwt_manager = JwtManager::new(state.jwt.secret.clone());
+      let jwt_manager = JwtManager::new(state.settings.jwt.secret.clone(), state.settings.jwt.expiration.clone());
 
       let access_token = match jwt_manager.create_jwt(user.id.clone(), TokenType::Access) {
         Ok(c) => {c},
@@ -135,7 +135,7 @@ pub fn refresh_token(state: &State<AppState>, cookies: &CookieJar<'_>) -> status
     }
   };
 
-  let jwt_manager = JwtManager::new(state.jwt.secret.clone());
+  let jwt_manager = JwtManager::new(state.settings.jwt.secret.clone(), state.settings.jwt.expiration.clone());
 
   let claims = match jwt_manager.validate_jwt(refr.to_string()) {
     Ok(c) => {c},

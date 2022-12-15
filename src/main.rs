@@ -1,11 +1,10 @@
 use rocket::{launch, routes, http::Method};
 use rocket_cors::{AllowedOrigins};
 
-use api::infra::state::{AppState, Repositories, OauthsConfig, JwtConfig};
+use api::infra::state::{AppState, Repositories };
 use api::infra::{config::Settings, sync_mongo::Connection};
 use api::modules::{
   auth::infra::endpoints::{get_third_token,validate_third_token, refresh_token, clear_token},
-  auth::infra::spotify::SpotifyAuthConfig,
   users::{infra::repo::MongoUserRepo}
 };
 
@@ -26,7 +25,7 @@ async fn rocket() ->  _ {
   };
 
   // Create Db connection
-  let db = Connection::new(settings.database.host, settings.database.name).await;
+  let db = Connection::new(settings.database.host.clone(), settings.database.name.clone()).await;
   
   // Repositories
   let user_repo = MongoUserRepo { client: db.clone() };
@@ -39,21 +38,11 @@ async fn rocket() ->  _ {
     item: item_repo
   };
 
-  let spotify_settings = SpotifyAuthConfig {
-    client: settings.spotify.client,
-    secret: settings.spotify.secret,
-    callback: settings.spotify.callback,
-    state: settings.spotify.state
-  };
+
 
   let state = AppState {
     repositories: repositories,
-    oauths: OauthsConfig{
-      spotify: spotify_settings
-    },
-    jwt: JwtConfig {
-      secret: settings.jwt.secret
-    }
+    settings: settings.clone(),
   };
 
   let allowed_hosts:  Vec<&str> = settings.cors.allowed_hosts.split(", ").collect();

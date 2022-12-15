@@ -18,6 +18,8 @@ base64 = "0.13.0"
 rocket =  { version = "0.5.0-rc.1", features=["json"]}
 rocket_cors = "0.6.0-alpha1"
 mockall = "0.11.2"
+tonic = "0.8.2"
+prost = "0.11.2"
 
 [dependencies.serde]
 version = "1.0.137"
@@ -43,3 +45,7 @@ features = [
 [dependencies.reqwest]
 version = "0.11.10"
 features = ["json"]
+
+
+[build-dependencies]
+tonic-build = "0.8.2"
