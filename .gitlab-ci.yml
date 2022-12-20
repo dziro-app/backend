@@ -16,7 +16,7 @@ unit:
       - target
   before_script:
     - apt-get update
-    - apt-get install pkg-config libssl-dev -y
+    - apt-get install pkg-config libssl-dev protobuf-compiler -y
   script:
     - cargo test
 
@@ -30,7 +30,7 @@ compile:
     - if: $CI_COMMIT_TAG && '$CI_COMMIT_REF_NAME == "main"'
   before_script:
     - apt-get update
-    - apt-get install pkg-config libssl-dev -y
+    - apt-get install pkg-config libssl-dev protobuf-compiler -y
   script:
     - cargo build --release
 

@@ -3,7 +3,7 @@ WORKDIR /app
 COPY . /app/
 RUN pwd && ls -lah ./
 RUN apt-get update
-RUN apt-get install pkg-config libssl-dev -y
+RUN apt-get install pkg-config libssl-dev protobuf-compiler -y
 RUN cargo build --release
 
 
