@@ -2,12 +2,9 @@ use base64::{encode};
 use reqwest::{self, StatusCode};
 use serde::Deserialize;
 
-#[derive(Debug)]
-pub enum Error {
-  Network(String),
-  Authorization(String),
-  MismatchingResponse(String)
-}
+use crate::modules::auth::infra::errors::{OauthResult, OauthError};
+
+
 
 #[derive(Clone, Debug, Deserialize)]
 pub struct SpotifyAuthConfig {
@@ -57,7 +54,7 @@ pub fn get_token_url(config: SpotifyAuthConfig) -> String {
   return url;
 }
 
-pub async fn get_auth_token(config: SpotifyAuthConfig, code: String) -> Result<SpotifyToken,  Error> {
+pub async fn get_auth_token(config: SpotifyAuthConfig, code: String) -> OauthResult<SpotifyToken> {
   let credentials = encode(format!("{}:{}", config.client, config.secret));
 
   let params = [
@@ -75,11 +72,11 @@ pub async fn get_auth_token(config: SpotifyAuthConfig, code: String) -> Result<S
     .await {
       Ok(r) => { 
         if r.status() != StatusCode::OK {
-          return Err(Error::Authorization("Bad code".to_string()));
+          return Err(OauthError::Authorization("Bad code".to_string()));
         } else { r }
       }
       Err(e) => {
-        return Err(Error::Network(format!("{}", e)))
+        return Err(OauthError::Network(format!("{}", e)))
       }
     };
 
@@ -87,13 +84,13 @@ pub async fn get_auth_token(config: SpotifyAuthConfig, code: String) -> Result<S
     Ok(r) => { return Ok(r) },
     Err(e) => {
       println!("Error: {}", e);
-      return Err(Error::MismatchingResponse(format!("{}", e)))
+      return Err(OauthError::MismatchingResponse(format!("{}", e)))
     }
   };
 
 }
 
-pub async fn get_user_info(token: SpotifyToken) -> Result<SpotifyUser, Error> {
+pub async fn get_user_info(token: SpotifyToken) -> OauthResult<SpotifyUser> {
   let client = reqwest::Client::new();
   let response = match client.get("https://api.spotify.com/v1/me")
     .header("Authorization", format!("{} {}", token.token_type, token.access_token))
@@ -101,11 +98,11 @@ pub async fn get_user_info(token: SpotifyToken) -> Result<SpotifyUser, Error> {
     .await {
       Ok(r) => { 
         if r.status() != StatusCode::OK {
-          return Err(Error::Authorization("Bad token".to_string()));
+          return Err(OauthError::Authorization("Bad token".to_string()));
         } else { r }
       }
       Err(e) => {
-        return Err(Error::Network(format!("{}", e)))
+        return Err(OauthError::Network(format!("{}", e)))
       }
     };
 
@@ -113,7 +110,7 @@ pub async fn get_user_info(token: SpotifyToken) -> Result<SpotifyUser, Error> {
     Ok(r) => { return Ok(r) },
     Err(e) => {
       println!("Error: {}", e);
-      return Err(Error::MismatchingResponse(format!("{}", e)))
+      return Err(OauthError::MismatchingResponse(format!("{}", e)))
     }
   };
 }
