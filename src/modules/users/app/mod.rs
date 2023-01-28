@@ -23,6 +23,7 @@ impl Manager {
     let user = User {
       id: data.id,
       username: data.username,
+      email: data.email,
       active_subscription: false,
       created_at: String::from(Local::now().to_string())
     };
@@ -33,8 +34,8 @@ impl Manager {
     }
   }
 
-  pub fn find(&self, id: String) -> Result<User, String> {
-    match self.repo.find(id) {
+  pub fn find(&self, email: String) -> Result<User, String> {
+    match self.repo.find_by_email(email) {
       Some(u) => {Ok(u)},
       None => { return Err("Not found".to_string())}
     }

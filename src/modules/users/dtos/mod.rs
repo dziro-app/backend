@@ -10,7 +10,9 @@ pub struct CreateUser {
   #[validate(length(min = 1))]
   pub id: String,
   #[validate(length(min = 1))]
-  pub username: String
+  pub username: String,
+  #[validate(length(min = 1))]
+  pub email: String
 }
 
 
@@ -22,7 +24,8 @@ mod users {
   fn ut_validate_user_item_dto() {
     let user = CreateUser {
       id: String::from("e37f5ca9-fba1-46d9-a3ef-e80ada650784"),
-      username: String::from("Evesan")
+      username: String::from("Evesan"),
+      email: String::from("everardo.ipn@gmail.com")
     };
 
     match user.validate() {

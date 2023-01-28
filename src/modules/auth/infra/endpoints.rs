@@ -65,6 +65,7 @@ pub async fn validate_third_token(third_api: String, code_info: Json<CodeInfo>, 
 
       tmp_user = CreateUser{
         id: user_data.id,
+        email: user_data.email,
         username: user_data.display_name
       };
 
@@ -74,6 +75,7 @@ pub async fn validate_third_token(third_api: String, code_info: Json<CodeInfo>, 
       profile_image = user_data.picture.clone();
       tmp_user = CreateUser {
         id: user_data.id,
+        email: user_data.email,
         username: user_data.name
       }
     }
@@ -86,7 +88,7 @@ pub async fn validate_third_token(third_api: String, code_info: Json<CodeInfo>, 
     repo: Box::new(state.repositories.user.clone())
   };
 
-  let user = match user_manager.find(tmp_user.id.clone()) {
+  let user = match user_manager.find(tmp_user.email.clone()) {
     Ok(u) => {u},
     Err(_) => {
       match user_manager.create(tmp_user) {

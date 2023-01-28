@@ -31,19 +31,20 @@ pub struct SpotifyUserImage {
 pub struct SpotifyUser {
   pub id: String,
   pub display_name: String,
+  pub email: String,
   pub images: Vec<SpotifyUserImage>
 }
 
 
 pub fn get_token_url(config: SpotifyAuthConfig) -> String {
-  let scopes = vec!["user-read-private".to_string()];
+  let scopes = vec!["user-read-private".to_string(), "user-read-email".to_string()];
   
   let mut url =  String::from("https://accounts.spotify.com/authorize?");
   let response_type = String::from("response_type=code&");
   let client_id = format!("client_id={}&", config.client);
   let redirect_uri = format!("redirect_uri={}&", config.callback.clone());
   let state = format!("state={}&", config.state.clone());
-  let scopes = format!("scopes={}", String::from(scopes.join(" ")));
+  let scopes = format!("scope={}", scopes.join(" "));
   
   url.push_str(&client_id);
   url.push_str(&response_type);

@@ -36,4 +36,9 @@ impl UserRepositoy for MongoUserRepo {
       None => { return None }
     };
   }
+
+  fn find_by_email(&self,email:String) -> Option<User> {
+      let collection = self.client.db.collection::<User>(COLLECTION_NAME);
+      collection.find_one(doc!{"email": email}, None).unwrap()
+  }
 }

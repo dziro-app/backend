@@ -13,6 +13,7 @@ use crate::modules::users::{
 pub trait UserRepositoy {
   fn save(&self, user: User) -> Result<User, String>;
   fn find(&self, id: String) -> Option<User>;
+  fn find_by_email(&self, email: String) -> Option<User>;
 }
 
 #[cfg(test)]
@@ -39,6 +40,7 @@ mod user_repository {
   
     let data = CreateUser {
       id:  String::from("idfromspotify"),
+      email: String::from("email from spotify"),
       username: String::from("evesan"),
     };
   
@@ -65,8 +67,9 @@ mod user_repository {
 
     repo.expect_find()
       .times(1)
-      .returning(|_x| Some(User{ 
+      .returning(|_x| Some(User{
         id: String::from(""),
+        email: String::from(""),
         username: String::from("evesan"),
         active_subscription: false,
         created_at: String::from("")
