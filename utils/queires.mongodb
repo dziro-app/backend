@@ -4,7 +4,7 @@
 // Use Ctrl+Space inside a snippet or a string literal to trigger completions.
 
 // Select the database to use.
-use('dziro');
+use('Dziro');
 
 /*
  * Drop all collections
@@ -60,4 +60,9 @@ use('dziro');
 // )
 
 // db.collections.find({})
-db.users.find({})
+// db.users.find({})
+
+db.collections.find({ 
+  "shared_with.user_id": "1281930477"
+  
+})

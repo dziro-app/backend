@@ -1,5 +1,5 @@
 use crate::modules::whishlists::{
-  domain::entities::collection::Collection,
+  domain::entities::{collection::Collection},
   dtos::collection::{UpdateCollection}
 };
 
@@ -15,8 +15,10 @@ use crate::modules::whishlists::{
 #[cfg_attr(test, automock)]
 pub trait CollectionRepository {
   fn list(&self, user_id: String) -> Result<Vec<Collection>, String>;
+  fn list_shared(&self, user_id: String) -> Result<Vec<Collection>, String>;
   fn save(&self, data: Collection) -> Result<Collection, String>;
   fn update(&self, user_id: String, id: String, data: UpdateCollection) -> Result<Collection, String>;
+  fn share_with(&self, id: String, user_id: String, collaborator_id: String, can_edit: bool) -> Result<(), String>;
   fn delete(&self, user_id: String, id: String) -> Result<(), String>;
 }
 
@@ -112,7 +114,8 @@ mod collection_repository {
         color: String::from("#00ff89"), 
         emoji: String::from("😎"), 
         owner_id: String::from("222f731a-4a70-4e6b-acd5-d233c9f80a98"), 
-        items: vec![], 
+        items: vec![],
+        shared_with: vec![],
         created_at: String::from("")
       } ));
     

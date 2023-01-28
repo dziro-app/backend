@@ -10,6 +10,7 @@ lazy_static! {
  * Collection data transfer object
 */
 
+// Defines what information should be provided to create a collection
 #[derive(Deserialize, Serialize, Validate, Clone, Debug)]
 pub struct CreateCollection {
   #[validate(length(min = 1))]
@@ -20,6 +21,7 @@ pub struct CreateCollection {
   pub emoji: String
 }
 
+// Defines what information may be provided to update a collection
 #[derive(Deserialize, Serialize, Validate, Clone)]
 pub struct UpdateCollection {
   #[validate(length(min = 1))]
@@ -28,6 +30,13 @@ pub struct UpdateCollection {
   pub color: Option<String>,
   #[validate(length(min = 1))]
   pub emoji: Option<String>
+}
+
+#[derive(Deserialize, Serialize, Validate, Clone)]
+pub struct ShareWith {
+  #[validate(email)]
+  pub email: String,
+  pub can_edit: bool
 }
 
 

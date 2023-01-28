@@ -10,7 +10,7 @@ use api::modules::{
 
 use api::modules::whishlists::infra::{
   repo::{collection::MongoCollectionRepo, item::MongoItemRepo},
-  endpoints::collection::{get_collections, create_collection, update_collection, delete_collection},
+  endpoints::collection::{get_collections, create_collection, update_collection, add_collaborator, delete_collection},
   endpoints::item::{scrap_item, create_item, update_item, toggle_obtained, delete_item}
 };
 
@@ -76,6 +76,7 @@ async fn rocket() ->  _ {
       get_collections,
       create_collection,
       update_collection,
+      add_collaborator,
       delete_collection
     ])
     .mount("/api/items", routes![

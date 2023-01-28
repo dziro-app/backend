@@ -4,9 +4,12 @@ use rocket::{get, post, patch, delete, State, http::Status, response::{content, 
 
 use crate::infra::state::AppState;
 use crate::modules::whishlists::app::collection;
-use crate::modules::whishlists::dtos::collection::{CreateCollection, UpdateCollection};
+use crate::modules::whishlists::dtos::collection::{CreateCollection, UpdateCollection, ShareWith};
 
 use crate::modules::auth::infra::guards::AuthenticatedUser;
+
+use crate::modules::users::app::Manager as UserManager;
+
 
 #[get("/")]
 pub fn get_collections(state: &State<AppState>, user: AuthenticatedUser) -> status::Custom<content::RawJson<String>> {
@@ -20,7 +23,7 @@ pub fn get_collections(state: &State<AppState>, user: AuthenticatedUser) -> stat
       let content = serde_json::to_string(&l).unwrap();
       return status::Custom(Status::Ok, content::RawJson(content));
     },
-    Err(_e) => { 
+    Err(_e) => {
       return status::Custom(Status::NotFound, content::RawJson(String::from("{}")));
     }
   }
@@ -69,6 +72,36 @@ pub fn update_collection(state: &State<AppState>, id: String, partial: Json<Upda
       return status::Custom(Status::NotFound, content::RawJson(String::from("{}")));
     }
   }
+}
+
+#[post("/<id>/add_collaborator",  format="application/json", data="<share>")]
+pub fn add_collaborator(state: &State<AppState>, id: String, user: AuthenticatedUser, share: Json<ShareWith>) -> status::Custom<content::RawJson<String>> {
+  let manager = collection::Manager{
+    repo: Box::new(state.repositories.collection.clone()),
+    user_id: user.id
+  };
+
+  let user_manager = UserManager {
+    repo: Box::new(state.repositories.user.clone())
+  };
+
+  match user_manager.find(share.email.clone()) {
+    Ok(u) => {
+      match manager.add_collaborator(id, u.id, share.can_edit) {
+        Ok(_) => {
+          return status::Custom(Status::Ok, content::RawJson(String::from("{}")));
+        },
+        Err(e) => { 
+          println!("{}", e);
+          return status::Custom(Status::InternalServerError, content::RawJson(String::from("{}")));
+        }
+      }
+
+    },
+    Err(_e) => {
+      return status::Custom(Status::NotFound, content::RawJson(String::from("{\"errors\": \"email not found\"}")));
+    }
+  };
 }
 
 #[delete("/<id>")]

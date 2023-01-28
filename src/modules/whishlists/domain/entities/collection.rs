@@ -1,5 +1,8 @@
 use serde::{Serialize, Deserialize};
-use crate::modules::whishlists::domain::entities::item::Item;
+use crate::modules::whishlists::domain::entities::{
+  item::Item,
+  shared::Collaborator
+};
 
 /*
 * Collection
@@ -22,7 +25,8 @@ pub struct Collection {
   pub emoji: String,
   pub owner_id: String,
   pub items: Vec<Item>,
-  pub created_at: String
+  pub created_at: String,
+  pub shared_with: Vec<Collaborator>
 }
 
 
@@ -33,6 +37,7 @@ mod whishlists {
   #[test]
   fn ut_test_collection_entity  () {
     let items: Vec<Item> = Vec::new();
+    let collaborators: Vec<Collaborator> = Vec::new();
 
     let c = Collection {
       id: String::from("14c97177-33c4-4e41-8af6-94241526a7c4"),
@@ -40,6 +45,7 @@ mod whishlists {
       color: String::from("#eaa510"),
       emoji: String::from("📖"),
       items: items,
+      shared_with: collaborators,
       owner_id: String::from("14c97177-33c4-4e41-8af6-94241526a7c4"),
       created_at: String::from("2022-04-18T22:39:16.627Z")
     };

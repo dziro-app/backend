@@ -1,4 +1,4 @@
-use mongodb::{bson::doc, options::{FindOneAndUpdateOptions, ReturnDocument}};
+use mongodb::{bson::{doc, Bson}, options::{FindOneAndUpdateOptions, ReturnDocument}};
 
 use crate::infra::sync_mongo::Connection;
 use crate::modules::whishlists::domain::repositories::collection::CollectionRepository;
@@ -22,6 +22,28 @@ impl CollectionRepository for MongoCollectionRepo {
     let mut retrived_collections: Vec<Collection> = Vec::new();
     let collection = self.client.db.collection::<Collection>(COLLECTION_NAME);
     let cursor = match collection.find(doc!{"owner_id": user_id}, None) {
+      Ok(c) => {c},
+      Err(e) => {
+        return Err(format!("{}", e));
+      }
+    };
+
+    for result in cursor {
+      let collection = match result {
+        Ok(r) => {r},
+        Err(e) => { return Err(format!("{}", e));}
+      };
+      retrived_collections.push(collection);        
+    }
+
+    return Ok(retrived_collections);
+  }
+
+  fn list_shared(&self, user_id:String) -> Result<Vec<Collection>,String> {
+    let mut retrived_collections: Vec<Collection> = Vec::new();
+
+    let collection = self.client.db.collection::<Collection>(COLLECTION_NAME);
+    let cursor = match collection.find(doc!{"shared_with.user_id": user_id, "shared_with.active": true}, None) {
       Ok(c) => {c},
       Err(e) => {
         return Err(format!("{}", e));
@@ -87,6 +109,31 @@ impl CollectionRepository for MongoCollectionRepo {
       Err(e) => {return Err(format!("{}", e))}
     }
 
+  }
+
+  fn share_with(&self, id: String, user_id: String, collaborator_id: String, can_edit: bool) -> Result<(),String> {
+
+    let collection = self.client.db.collection::<Collection>(COLLECTION_NAME);
+    
+    let collaborators = doc!{
+      "$push": {
+        "shared_with": Bson::Document(doc!{
+          "user_id": collaborator_id,
+          "can_edit": can_edit,
+          "active": true
+        })
+      }
+    };
+
+    match collection.find_one_and_update(doc!{"id": id, "owner_id": user_id}, collaborators, None) {
+      Ok(result) => {
+        match result {
+          Some(_) => { return Ok(())},
+          None => { return Err(String::from("Not found")) }
+        }
+      },
+      Err(e) => { return Err(format!("{}", e))}
+    }
   }
 
   fn delete(& self, user_id: String, id: String) -> Result<(), String> {
