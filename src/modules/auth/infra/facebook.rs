@@ -4,17 +4,17 @@ use base64;
 
 use crate::modules::auth::infra::errors::{OauthResult, OauthError};
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 pub struct FacebookImage {
   pub url: String
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 pub struct FacebookImageData {
   pub data:FacebookImage
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 pub struct FacebookResponse {
   pub id: String,
   pub name: String,
